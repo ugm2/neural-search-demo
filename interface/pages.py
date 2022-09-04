@@ -11,10 +11,10 @@ def page_landing_page(container):
             "This is a tool to allow indexing & search content using neural capabilities"
         )
         st.markdown(
-            "In this first version you can:"/
-            "  - Index raw text as documents"/
-            "  - Use Dense Passage Retrieval pipeline"/
-            "  - Search the indexed documents"
+            "In this first version you can:"
+            "\n  - Index raw text as documents"
+            "\n  - Use Dense Passage Retrieval pipeline"
+            "\n  - Search the indexed documents"
         )
         
 def page_search(container):
