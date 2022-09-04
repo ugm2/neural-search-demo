@@ -5,10 +5,16 @@ from interface.components import component_show_search_result, component_text_in
 
 def page_landing_page(container):
     with container:
-        st.header("🧠 Neural Search 🔎")
+        st.header("Neural Search V1.0")
 
         st.markdown(
             "This is a tool to allow indexing & search content using neural capabilities"
+        )
+        st.markdown(
+            "In this first version you can:"/
+            "  - Index raw text as documents"/
+            "  - Use Dense Passage Retrieval pipeline"/
+            "  - Search the indexed documents"
         )
         
 def page_search(container):
