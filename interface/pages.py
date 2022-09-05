@@ -16,6 +16,13 @@ def page_landing_page(container):
             "\n  - Use Dense Passage Retrieval pipeline"
             "\n  - Search the indexed documents"
         )
+        st.makrdown(
+            "TODO list:"
+            "\n  - Option to print pipeline structure on page"
+            "\n  - Build other pipelines"
+            "\n  - Include file/url indexing"
+            "\n  - [Optional] Include text to audio to read responses"
+        )
         
 def page_search(container):
     with container:
