@@ -1,15 +1,10 @@
 name: Linting
 
-on:
-  push:
-    branches: [ "main" ]
-
-  workflow_dispatch:
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  linting:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Python Linter
-        uses: sunnysid3up/python-linter@v0.1-beta.7
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
