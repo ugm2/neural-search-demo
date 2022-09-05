@@ -1,0 +1,1 @@
+python -m black app.py interface core

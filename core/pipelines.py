@@ -9,9 +9,10 @@ from haystack.nodes.retriever import DensePassageRetriever, TfidfRetriever
 from haystack.nodes.preprocessor import PreProcessor
 import streamlit as st
 
+
 @st.cache(allow_output_mutation=True)
 def keyword_search(
-    index='documents',
+    index="documents",
 ):
     document_store = InMemoryDocumentStore(index=index)
     keyword_retriever = TfidfRetriever(document_store=(document_store))
@@ -31,16 +32,25 @@ def keyword_search(
     # INDEXING PIPELINE
     index_pipeline = Pipeline()
     index_pipeline.add_node(processor, name="Preprocessor", inputs=["File"])
-    index_pipeline.add_node(keyword_retriever, name="TfidfRetriever", inputs=["Preprocessor"])
+    index_pipeline.add_node(
+        keyword_retriever, name="TfidfRetriever", inputs=["Preprocessor"]
+    )
     index_pipeline.add_node(
         document_store, name="DocumentStore", inputs=["TfidfRetriever"]
     )
 
     return search_pipeline, index_pipeline
 
-@st.cache(hash_funcs={tokenizers.Tokenizer: lambda _: None, tokenizers.AddedToken: lambda _: None}, allow_output_mutation=True)
+
+@st.cache(
+    hash_funcs={
+        tokenizers.Tokenizer: lambda _: None,
+        tokenizers.AddedToken: lambda _: None,
+    },
+    allow_output_mutation=True,
+)
 def dense_passage_retrieval(
-    index='documents',
+    index="documents",
     query_embedding_model="facebook/dpr-question_encoder-single-nq-base",
     passage_embedding_model="facebook/dpr-ctx_encoder-single-nq-base",
 ):
