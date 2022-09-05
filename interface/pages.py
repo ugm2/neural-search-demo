@@ -16,7 +16,7 @@ def page_landing_page(container):
             "\n  - Use Dense Passage Retrieval pipeline"
             "\n  - Search the indexed documents"
         )
-        st.makrdown(
+        st.markdown(
             "TODO list:"
             "\n  - Option to print pipeline structure on page"
             "\n  - Build other pipelines"
