@@ -26,8 +26,10 @@ def search(queries, pipeline):
     matches_queries = pipeline.run_batch(queries=queries)
     for matches in matches_queries["documents"]:
         query_results = []
+        score_is_empty = False
         for res in matches:
-            metadata = res.meta
+            if not score_is_empty:
+                score_is_empty = True if res.score is None else False
             query_results.append(
                 {
                     "text": res.content,
@@ -36,7 +38,7 @@ def search(queries, pipeline):
                     "fragment_id": res.id
                 }
             )
-        results.append(
-            sorted(query_results, key=lambda x: x["score"], reverse=True)
-        )
+        if not score_is_empty:
+            query_results = sorted(query_results, key=lambda x: x["score"], reverse=True)
+        results.append(query_results)
     return results

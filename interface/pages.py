@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 from core.search_index import index, search
-from interface.components import component_show_search_result, component_text_input
+from interface.components import component_show_pipeline, component_show_search_result, component_text_input
 
 def page_landing_page(container):
     with container:
@@ -18,7 +18,6 @@ def page_landing_page(container):
         )
         st.markdown(
             "TODO list:"
-            "\n  - Option to print pipeline structure on page"
             "\n  - Build other pipelines"
             "\n  - Include file/url indexing"
             "\n  - [Optional] Include text to audio to read responses"
@@ -30,6 +29,8 @@ def page_search(container):
         
         ## SEARCH ##
         query = st.text_input("Query")
+        
+        component_show_pipeline(container, st.session_state['search_pipeline'])
         
         if st.button("Search"):
             st.session_state['search_results'] = search(
@@ -45,6 +46,8 @@ def page_search(container):
 def page_index(container):
     with container:
         st.title("Index time!")
+        
+        component_show_pipeline(container, st.session_state['index_pipeline'])
         
         input_funcs = {
             "Raw Text": (component_text_input, "card-text"),

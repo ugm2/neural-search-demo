@@ -5,6 +5,9 @@ st.set_page_config(
     page_icon="🔎",
     layout="wide",
     initial_sidebar_state="expanded",
+    menu_items={
+        'About': "https://github.com/ugm2/neural-search-demo"
+    }
 )
 
 from streamlit_option_menu import option_menu
