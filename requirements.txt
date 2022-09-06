@@ -1,6 +1,4 @@
 streamlit
 streamlit_option_menu
 farm-haystack
-graphviz
-pygraphviz
 black
