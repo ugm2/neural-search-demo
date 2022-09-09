@@ -1,6 +1,7 @@
 import core.pipelines as pipelines_functions
 from inspect import getmembers, isfunction
 
+
 def get_pipelines():
     pipeline_names, pipeline_funcs = list(
         zip(*getmembers(pipelines_functions, isfunction))
