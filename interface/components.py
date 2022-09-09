@@ -1,16 +1,10 @@
 import streamlit as st
-import core.pipelines as pipelines_functions
-from inspect import getmembers, isfunction
-from networkx.drawing.nx_agraph import to_agraph
+from interface.utils import get_pipelines
+from interface.draw_pipelines import get_pipeline_graph
 
 
 def component_select_pipeline(container):
-    pipeline_names, pipeline_funcs = list(
-        zip(*getmembers(pipelines_functions, isfunction))
-    )
-    pipeline_names = [
-        " ".join([n.capitalize() for n in name.split("_")]) for name in pipeline_names
-    ]
+    pipeline_names, pipeline_funcs = get_pipelines()
     with container:
         selected_pipeline = st.selectbox(
             "Select pipeline",
@@ -25,12 +19,11 @@ def component_select_pipeline(container):
         ) = pipeline_funcs[pipeline_names.index(selected_pipeline)]()
 
 
-def component_show_pipeline(container, pipeline):
+def component_show_pipeline(pipeline):
     """Draw the pipeline"""
     with st.expander("Show pipeline"):
-        graphviz = to_agraph(pipeline.graph)
-        graphviz.layout("dot")
-        st.graphviz_chart(graphviz.string())
+        fig = get_pipeline_graph(pipeline)
+        st.plotly_chart(fig, use_container_width=True)
 
 
 def component_show_search_result(container, results):

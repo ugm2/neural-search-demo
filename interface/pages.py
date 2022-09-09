@@ -36,7 +36,7 @@ def page_search(container):
         ## SEARCH ##
         query = st.text_input("Query")
 
-        # component_show_pipeline(container, st.session_state["search_pipeline"])
+        component_show_pipeline(st.session_state["search_pipeline"])
 
         if st.button("Search"):
             st.session_state["search_results"] = search(
@@ -53,7 +53,7 @@ def page_index(container):
     with container:
         st.title("Index time!")
 
-        # component_show_pipeline(container, st.session_state["index_pipeline"])
+        component_show_pipeline(st.session_state["index_pipeline"])
 
         input_funcs = {
             "Raw Text": (component_text_input, "card-text"),
