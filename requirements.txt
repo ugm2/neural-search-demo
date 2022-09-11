@@ -2,3 +2,4 @@ streamlit
 streamlit_option_menu
 farm-haystack
 black
+plotly
