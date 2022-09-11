@@ -26,24 +26,35 @@ def get_pipeline_graph(pipeline):
     fixed_pos_nodes = {}
     for idx, (in_node, out_nodes) in enumerate(node_connections.items()):
         if in_node not in fixed_pos_nodes:
-            fixed_pos_nodes[in_node] = np.array([current_coordinate[0], current_coordinate[1]])
+            fixed_pos_nodes[in_node] = np.array(
+                [current_coordinate[0], current_coordinate[1]]
+            )
             current_coordinate = (current_coordinate[0], current_coordinate[1] - 1)
         # If more than 1 out node, then branch out in X coordinate
         if len(out_nodes) > 1:
             # if length is odd
             if (len(out_nodes) % 2) != 0:
-                middle_node = out_nodes[round(len(out_nodes)/2, 0) - 1]
-                fixed_pos_nodes[middle_node] = np.array([current_coordinate[0], current_coordinate[1]])
+                middle_node = out_nodes[round(len(out_nodes) / 2, 0) - 1]
+                fixed_pos_nodes[middle_node] = np.array(
+                    [current_coordinate[0], current_coordinate[1]]
+                )
                 out_nodes = [n for n in out_nodes if n != middle_node]
-            correction_coordinate = - len(out_nodes) / 2
+            correction_coordinate = -len(out_nodes) / 2
             for out_node in out_nodes:
-                fixed_pos_nodes[out_node] = np.array([int(current_coordinate[0] + correction_coordinate), int(current_coordinate[1])])
+                fixed_pos_nodes[out_node] = np.array(
+                    [
+                        int(current_coordinate[0] + correction_coordinate),
+                        int(current_coordinate[1]),
+                    ]
+                )
                 if correction_coordinate == -1:
                     correction_coordinate += 1
                 correction_coordinate += 1
             current_coordinate = (current_coordinate[0], current_coordinate[1] - 1)
         elif len(node_connections) - 1 == idx:
-            fixed_pos_nodes[out_nodes[0]] = np.array([current_coordinate[0], current_coordinate[1]])
+            fixed_pos_nodes[out_nodes[0]] = np.array(
+                [current_coordinate[0], current_coordinate[1]]
+            )
     pos = nx.spring_layout(G, pos=fixed_pos_nodes, fixed=G.nodes(), seed=42)
     for node in G.nodes:
         G.nodes[node]["pos"] = list(pos[node])
