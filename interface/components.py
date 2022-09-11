@@ -13,10 +13,16 @@ def component_select_pipeline(container):
             if "Keyword Search" in pipeline_names
             else 0,
         )
-        (
-            st.session_state["search_pipeline"],
-            st.session_state["index_pipeline"],
-        ) = pipeline_funcs[pipeline_names.index(selected_pipeline)]()
+        if st.session_state["pipeline"] is None or st.session_state["pipeline"]["name"] != selected_pipeline:
+            (
+                search_pipeline,
+                index_pipeline,
+            ) = pipeline_funcs[pipeline_names.index(selected_pipeline)]()
+            st.session_state["pipeline"] = {
+                'name': selected_pipeline,
+                'search_pipeline': search_pipeline,
+                'index_pipeline': index_pipeline,
+            }
 
 
 def component_show_pipeline(pipeline):

@@ -2,15 +2,12 @@
 Haystack Pipelines
 """
 
-import tokenizers
 from haystack import Pipeline
 from haystack.document_stores import InMemoryDocumentStore
 from haystack.nodes.retriever import DensePassageRetriever, TfidfRetriever
 from haystack.nodes.preprocessor import PreProcessor
-import streamlit as st
 
 
-@st.cache(allow_output_mutation=True)
 def keyword_search(
     index="documents",
 ):
@@ -42,13 +39,6 @@ def keyword_search(
     return search_pipeline, index_pipeline
 
 
-@st.cache(
-    hash_funcs={
-        tokenizers.Tokenizer: lambda _: None,
-        tokenizers.AddedToken: lambda _: None,
-    },
-    allow_output_mutation=True,
-)
 def dense_passage_retrieval(
     index="documents",
     query_embedding_model="facebook/dpr-question_encoder-single-nq-base",

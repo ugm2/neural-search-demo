@@ -3,11 +3,9 @@ from typing import List
 from itertools import chain
 import networkx as nx
 import plotly.graph_objs as go
-import streamlit as st
 import numpy as np
 
 
-@st.cache(allow_output_mutation=True)
 def get_pipeline_graph(pipeline):
     # Controls for how the graph is drawn
     nodeColor = "#ffbf00"
@@ -16,13 +14,37 @@ def get_pipeline_graph(pipeline):
     lineColor = "#ffffff"
 
     G = pipeline.graph
-    initial_coordinate = (0, len(G.nodes))
-    fixed_pos = {
-        node: np.array([initial_coordinate[0], initial_coordinate[1] - float(idx)])
-        for idx, node in enumerate(G.nodes)
-    }
-    pos = nx.spring_layout(G, pos=fixed_pos, seed=42)
-
+    current_coordinate = (0, len(set([edge[0] for edge in G.edges()])) + 1)
+    # Transform G.edges into {node : all_connected_nodes} format
+    node_connections = {}
+    for in_node, out_node in G.edges():
+        if in_node in node_connections:
+            node_connections[in_node].append(out_node)
+        else:
+            node_connections[in_node] = [out_node]
+    # Get node coordinates/pos
+    fixed_pos_nodes = {}
+    for idx, (in_node, out_nodes) in enumerate(node_connections.items()):
+        if in_node not in fixed_pos_nodes:
+            fixed_pos_nodes[in_node] = np.array([current_coordinate[0], current_coordinate[1]])
+            current_coordinate = (current_coordinate[0], current_coordinate[1] - 1)
+        # If more than 1 out node, then branch out in X coordinate
+        if len(out_nodes) > 1:
+            # if length is odd
+            if (len(out_nodes) % 2) != 0:
+                middle_node = out_nodes[round(len(out_nodes)/2, 0) - 1]
+                fixed_pos_nodes[middle_node] = np.array([current_coordinate[0], current_coordinate[1]])
+                out_nodes = [n for n in out_nodes if n != middle_node]
+            correction_coordinate = - len(out_nodes) / 2
+            for out_node in out_nodes:
+                fixed_pos_nodes[out_node] = np.array([int(current_coordinate[0] + correction_coordinate), int(current_coordinate[1])])
+                if correction_coordinate == -1:
+                    correction_coordinate += 1
+                correction_coordinate += 1
+            current_coordinate = (current_coordinate[0], current_coordinate[1] - 1)
+        elif len(node_connections) - 1 == idx:
+            fixed_pos_nodes[out_nodes[0]] = np.array([current_coordinate[0], current_coordinate[1]])
+    pos = nx.spring_layout(G, pos=fixed_pos_nodes, fixed=G.nodes(), seed=42)
     for node in G.nodes:
         G.nodes[node]["pos"] = list(pos[node])
 
