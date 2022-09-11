@@ -4,14 +4,89 @@ from itertools import chain
 import networkx as nx
 import plotly.graph_objs as go
 import streamlit as st
+import numpy as np
 
-# Start and end are lists defining start and end points
-# Edge x and y are lists used to construct the graph
-# arrowAngle and arrowLength define properties of the arrowhead
-# arrowPos is None, 'middle' or 'end' based on where on the edge you want the arrow to appear
-# arrowLength is the length of the arrowhead
-# arrowAngle is the angle in degrees that the arrowhead makes with the edge
-# dotSize is the plotly scatter dot size you are using (used to even out line spacing when you have a mix of edge lengths)
+@st.cache(allow_output_mutation=True)
+def get_pipeline_graph(pipeline):
+    # Controls for how the graph is drawn
+    nodeColor = "#ffbf00"
+    nodeSize = 40
+    lineWidth = 2
+    lineColor = "#ffffff"
+
+    G = pipeline.graph
+    initial_coordinate = (0, len(G.nodes))
+    fixed_pos = {node: np.array([initial_coordinate[0], initial_coordinate[1]-float(idx)]) for idx, node in enumerate(G.nodes)}
+    pos = nx.spring_layout(G, pos=fixed_pos, seed=42)
+
+    for node in G.nodes:
+        G.nodes[node]["pos"] = list(pos[node])
+
+    # Make list of nodes for plotly
+    node_x = []
+    node_y = []
+    node_name = []
+    for node in G.nodes():
+        node_name.append(G.nodes[node]['component'].name)
+        x, y = G.nodes[node]["pos"]
+        node_x.append(x)
+        node_y.append(y)
+
+    # Make a list of edges for plotly, including line segments that result in arrowheads
+    edge_x = []
+    edge_y = []
+    for edge in G.edges():
+        start = G.nodes[edge[0]]["pos"]
+        end = G.nodes[edge[1]]["pos"]
+        # addEdge(start, end, edge_x, edge_y, lengthFrac=1, arrowPos = None, arrowLength=0.025, arrowAngle = 30, dotSize=20)
+        edge_x, edge_y = addEdge(
+            start,
+            end,
+            edge_x,
+            edge_y,
+            lengthFrac=0.5,
+            arrowPos="end",
+            arrowLength=0.04,
+            arrowAngle=40,
+            dotSize=nodeSize,
+        )
+
+    edge_trace = go.Scatter(
+        x=edge_x,
+        y=edge_y,
+        line=dict(width=lineWidth, color=lineColor),
+        hoverinfo="none",
+        mode="lines",
+    )
+
+    node_trace = go.Scatter(
+        x=node_x,
+        y=node_y,
+        mode="markers+text",
+        textposition="middle right",
+        hoverinfo='none',
+        text=node_name,
+        marker=dict(showscale=False, color=nodeColor, size=nodeSize),
+        textfont=dict(size=18)
+    )
+
+    fig = go.Figure(
+        data=[edge_trace, node_trace],
+        layout=go.Layout(
+            showlegend=False,
+            hovermode="closest",
+            margin=dict(b=20, l=5, r=5, t=40),
+            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        ),
+    )
+
+    fig.update_layout(
+        yaxis=dict(scaleanchor="x", scaleratio=1), plot_bgcolor="rgb(14,17,23)"
+    )
+
+    return fig
+
 def addEdge(
     start,
     end,
@@ -148,79 +223,3 @@ def add_arrows(
 
     return x_arrows, y_arrows
 
-
-@st.cache(allow_output_mutation=True)
-def get_pipeline_graph(pipeline):
-    # Controls for how the graph is drawn
-    nodeColor = "Blue"
-    nodeSize = 20
-    lineWidth = 2
-    lineColor = "#000000"
-
-    G = pipeline.graph
-
-    pos = nx.spring_layout(G)
-
-    for node in G.nodes:
-        G.nodes[node]["pos"] = list(pos[node])
-
-    # Make list of nodes for plotly
-    node_x = []
-    node_y = []
-    for node in G.nodes():
-        x, y = G.nodes[node]["pos"]
-        node_x.append(x)
-        node_y.append(y)
-
-    # Make a list of edges for plotly, including line segments that result in arrowheads
-    edge_x = []
-    edge_y = []
-    for edge in G.edges():
-        start = G.nodes[edge[0]]["pos"]
-        end = G.nodes[edge[1]]["pos"]
-        # addEdge(start, end, edge_x, edge_y, lengthFrac=1, arrowPos = None, arrowLength=0.025, arrowAngle = 30, dotSize=20)
-        edge_x, edge_y = addEdge(
-            start,
-            end,
-            edge_x,
-            edge_y,
-            lengthFrac=0.8,
-            arrowPos="end",
-            arrowLength=0.04,
-            arrowAngle=30,
-            dotSize=nodeSize,
-        )
-
-    edge_trace = go.Scatter(
-        x=edge_x,
-        y=edge_y,
-        line=dict(width=lineWidth, color=lineColor),
-        hoverinfo="none",
-        mode="lines",
-    )
-
-    node_trace = go.Scatter(
-        x=node_x,
-        y=node_y,
-        mode="markers",
-        hoverinfo="text",
-        marker=dict(showscale=False, color=nodeColor, size=nodeSize),
-    )
-
-    fig = go.Figure(
-        data=[edge_trace, node_trace],
-        layout=go.Layout(
-            showlegend=False,
-            hovermode="closest",
-            margin=dict(b=20, l=5, r=5, t=40),
-            xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-            yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        ),
-    )
-
-    # Note: if you don't use fixed ratio axes, the arrows won't be symmetrical
-    fig.update_layout(
-        yaxis=dict(scaleanchor="x", scaleratio=1), plot_bgcolor="rgb(255,255,255)"
-    )
-
-    return fig
