@@ -6,6 +6,7 @@ import plotly.graph_objs as go
 import streamlit as st
 import numpy as np
 
+
 @st.cache(allow_output_mutation=True)
 def get_pipeline_graph(pipeline):
     # Controls for how the graph is drawn
@@ -16,7 +17,10 @@ def get_pipeline_graph(pipeline):
 
     G = pipeline.graph
     initial_coordinate = (0, len(G.nodes))
-    fixed_pos = {node: np.array([initial_coordinate[0], initial_coordinate[1]-float(idx)]) for idx, node in enumerate(G.nodes)}
+    fixed_pos = {
+        node: np.array([initial_coordinate[0], initial_coordinate[1] - float(idx)])
+        for idx, node in enumerate(G.nodes)
+    }
     pos = nx.spring_layout(G, pos=fixed_pos, seed=42)
 
     for node in G.nodes:
@@ -27,7 +31,7 @@ def get_pipeline_graph(pipeline):
     node_y = []
     node_name = []
     for node in G.nodes():
-        node_name.append(G.nodes[node]['component'].name)
+        node_name.append(G.nodes[node]["component"].name)
         x, y = G.nodes[node]["pos"]
         node_x.append(x)
         node_y.append(y)
@@ -64,10 +68,10 @@ def get_pipeline_graph(pipeline):
         y=node_y,
         mode="markers+text",
         textposition="middle right",
-        hoverinfo='none',
+        hoverinfo="none",
         text=node_name,
         marker=dict(showscale=False, color=nodeColor, size=nodeSize),
-        textfont=dict(size=18)
+        textfont=dict(size=18),
     )
 
     fig = go.Figure(
@@ -86,6 +90,7 @@ def get_pipeline_graph(pipeline):
     )
 
     return fig
+
 
 def addEdge(
     start,
@@ -222,4 +227,3 @@ def add_arrows(
     y_arrows = arrow_line_1y_coords + arrow_line_2y_coords
 
     return x_arrows, y_arrows
-
