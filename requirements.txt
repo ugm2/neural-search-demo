@@ -1,5 +1,6 @@
-streamlit
-streamlit_option_menu
-farm-haystack
-black
-plotly
+streamlit==1.12.2
+streamlit_option_menu==0.3.2
+farm-haystack==1.8.0
+black==22.8.0
+plotly==5.10.0
+newspaper3k==0.2.8
