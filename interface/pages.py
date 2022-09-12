@@ -5,6 +5,7 @@ from interface.components import (
     component_show_pipeline,
     component_show_search_result,
     component_text_input,
+    component_article_url,
 )
 
 
@@ -57,6 +58,7 @@ def page_index(container):
 
         input_funcs = {
             "Raw Text": (component_text_input, "card-text"),
+            "URL": (component_article_url, "card-link"),
         }
         selected_input = option_menu(
             "Input Text",

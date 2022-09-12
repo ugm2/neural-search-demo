@@ -1,5 +1,5 @@
 import streamlit as st
-from interface.utils import get_pipelines
+from interface.utils import get_pipelines, extract_text_from_url
 from interface.draw_pipelines import get_pipeline_graph
 
 
@@ -62,5 +62,25 @@ def component_text_input(container):
                     break
         corpus = [
             {"text": doc["text"], "id": doc_id} for doc_id, doc in enumerate(texts)
+        ]
+        return corpus
+
+
+def component_article_url(container):
+    """Draw the Article URL widget"""
+    with container:
+        urls = []
+        doc_id = 1
+        with st.expander("Enter URLs"):
+            while True:
+                url = st.text_input(f"URL {doc_id}", key=doc_id)
+                if url != "":
+                    urls.append({"text": extract_text_from_url(url)})
+                    doc_id += 1
+                    st.markdown("---")
+                else:
+                    break
+        corpus = [
+            {"text": doc["text"], "id": doc_id} for doc_id, doc in enumerate(urls)
         ]
         return corpus
