@@ -1,5 +1,5 @@
 import streamlit as st
-from interface.utils import get_pipelines, extract_text_from_url
+from interface.utils import get_pipelines, extract_text_from_url, extract_text_from_file
 from interface.draw_pipelines import get_pipeline_graph
 
 
@@ -82,5 +82,29 @@ def component_article_url(container):
                     break
         corpus = [
             {"text": doc["text"], "id": doc_id} for doc_id, doc in enumerate(urls)
+        ]
+        return corpus
+
+
+def component_file_input(container):
+    """Draw the extract text from file widget"""
+    with container:
+        files = []
+        doc_id = 1
+        with st.expander("Enter Files"):
+            while True:
+                file = st.file_uploader("Upload a .txt, .pdf, .csv file", key=doc_id)
+                if file != None:
+                    extracted_text = extract_text_from_file(file)
+                    if extracted_text != None:
+                        files.append({"text": extracted_text})
+                        doc_id += 1
+                        st.markdown("---")
+                    else:
+                        break
+                else:
+                    break
+        corpus = [
+            {"text": doc["text"], "id": doc_id} for doc_id, doc in enumerate(files)
         ]
         return corpus

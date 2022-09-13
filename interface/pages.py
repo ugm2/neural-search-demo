@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from core.search_index import index, search
 from interface.components import (
+    component_file_input,
     component_show_pipeline,
     component_show_search_result,
     component_text_input,
@@ -59,6 +60,7 @@ def page_index(container):
         input_funcs = {
             "Raw Text": (component_text_input, "card-text"),
             "URL": (component_article_url, "card-link"),
+            "File": (component_file_input, "card-file"),
         }
         selected_input = option_menu(
             "Input Text",
