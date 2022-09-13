@@ -52,22 +52,22 @@ def extract_text_from_file(file):
         file_text = all_text
 
         return file_text
-    
+
     # read csv file
     elif file.type == "text/csv":
         csv = pd.read_csv(file)
         # get columns of type string
-        string_columns = csv.select_dtypes(include=['object']).columns
+        string_columns = csv.select_dtypes(include=["object"]).columns
         # get data from columns and join it together
         file_text = ""
         for row in csv[string_columns].values.tolist():
             # remove NaNs
-            row = [x for x in row if str(x) != 'nan']
+            row = [x for x in row if str(x) != "nan"]
             for column in row:
                 txt = ""
                 if isinstance(column, list):
                     try:
-                       txt = " ".join(column)
+                        txt = " ".join(column)
                     except:
                         continue
                 elif isinstance(column, str):
@@ -80,4 +80,3 @@ def extract_text_from_file(file):
     else:
         st.warning(f"File type {file.type} not supported")
         return None
-
