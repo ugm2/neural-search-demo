@@ -80,6 +80,11 @@ def component_article_url(container):
                     st.markdown("---")
                 else:
                     break
+                
+        for idx, doc in enumerate(urls):
+            with st.expander(f"Preview URL {idx}"):
+                st.write(doc)
+        
         corpus = [
             {"text": doc["text"], "id": doc_id} for doc_id, doc in enumerate(urls)
         ]
@@ -93,7 +98,7 @@ def component_file_input(container):
         doc_id = 1
         with st.expander("Enter Files"):
             while True:
-                file = st.file_uploader("Upload a .txt, .pdf, .csv file", key=doc_id)
+                file = st.file_uploader("Upload a .txt, .pdf, .csv, image file", key=doc_id)
                 if file != None:
                     extracted_text = extract_text_from_file(file)
                     if extracted_text != None:
@@ -104,6 +109,11 @@ def component_file_input(container):
                         break
                 else:
                     break
+        
+        for idx, doc in enumerate(files):
+            with st.expander(f"Preview File {idx}"):
+                st.write(doc)
+        
         corpus = [
             {"text": doc["text"], "id": doc_id} for doc_id, doc in enumerate(files)
         ]

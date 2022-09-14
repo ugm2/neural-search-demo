@@ -5,3 +5,4 @@ black==22.8.0
 plotly==5.10.0
 newspaper3k==0.2.8
 PyPDF2==2.10.7
+pytesseract==0.3.10

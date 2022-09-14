@@ -26,7 +26,6 @@ def page_landing_page(container):
         st.markdown(
             "TODO list:"
             "\n  - Build other pipelines"
-            "\n  - Include file/url indexing"
             "\n  - [Optional] Include text to audio to read responses"
         )
 

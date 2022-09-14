@@ -5,7 +5,8 @@ from newspaper import Article
 from PyPDF2 import PdfFileReader
 import streamlit as st
 import pandas as pd
-
+import pytesseract
+from PIL import Image
 
 def get_pipelines():
     pipeline_names, pipeline_funcs = list(
@@ -25,7 +26,7 @@ def extract_text_from_url(url: str):
 
     return article.text
 
-
+@st.experimental_memo
 def extract_text_from_file(file):
     # read text file
     if file.type == "text/plain":
@@ -76,6 +77,10 @@ def extract_text_from_file(file):
                     continue
                 file_text += " " + txt
         return file_text
+    
+    # read image file (OCR)
+    elif file.type == 'image/jpeg':
+        return pytesseract.image_to_string(Image.open(file))
 
     else:
         st.warning(f"File type {file.type} not supported")
