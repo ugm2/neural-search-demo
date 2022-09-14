@@ -12,21 +12,25 @@ from interface.components import (
 
 def page_landing_page(container):
     with container:
-        st.header("Neural Search V1.0")
+        st.header("Neural Search V2.0")
 
         st.markdown(
             "This is a tool to allow indexing & search content using neural capabilities"
         )
         st.markdown(
-            "In this first version you can:"
-            "\n  - Index raw text as documents"
-            "\n  - Use Dense Passage Retrieval pipeline"
+            "In this second version you can:"
+            "\n  - Index raw text, URLs and almost any file as documents"
+            "\n  - Use Dense Passage Retrieval & Keyword Search pipeline"
             "\n  - Search the indexed documents"
         )
         st.markdown(
             "TODO list:"
             "\n  - Build other pipelines"
             "\n  - [Optional] Include text to audio to read responses"
+        )
+        st.markdown(
+            "Follow development of the tool [here](https://github.com/ugm2/neural-search-demo)"
+            "\n\nDeveloped with 💚 by [@ugm2](https://github.com/ugm2)"
         )
 
 
