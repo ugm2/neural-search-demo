@@ -8,6 +8,7 @@ import pandas as pd
 import pytesseract
 from PIL import Image
 
+
 def get_pipelines():
     pipeline_names, pipeline_funcs = list(
         zip(*getmembers(pipelines_functions, isfunction))
@@ -25,6 +26,7 @@ def extract_text_from_url(url: str):
     article.parse()
 
     return article.text
+
 
 @st.experimental_memo
 def extract_text_from_file(file):
@@ -77,9 +79,9 @@ def extract_text_from_file(file):
                     continue
                 file_text += " " + txt
         return file_text
-    
+
     # read image file (OCR)
-    elif file.type == 'image/jpeg':
+    elif file.type == "image/jpeg":
         return pytesseract.image_to_string(Image.open(file))
 
     else:
