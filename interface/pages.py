@@ -28,6 +28,10 @@ def page_landing_page(container):
             "\n  - Build other pipelines"
             "\n  - [Optional] Include text to audio to read responses"
         )
+        st.markdown(
+            "Follow development of the tool [here](https://github.com/ugm2/neural-search-demo)"
+            "\n\nDeveloped with 💚 by [@ugm2](https://github.com/ugm2)"
+        )
 
 
 def page_search(container):
