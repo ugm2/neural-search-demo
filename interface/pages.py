@@ -18,6 +18,9 @@ def page_landing_page(container):
             "This is a tool to allow indexing & search content using neural capabilities"
         )
         st.markdown(
+            "It uses the [Haystack](https://haystack.deepset.ai/overview/intro) open-source framework for building search systems"
+        )
+        st.markdown(
             "In this second version you can:"
             "\n  - Index raw text, URLs and almost any file as documents"
             "\n  - Use Dense Passage Retrieval & Keyword Search pipeline"
@@ -62,11 +65,11 @@ def page_index(container):
 
         input_funcs = {
             "Raw Text": (component_text_input, "card-text"),
-            "URL": (component_article_url, "card-link"),
-            "File": (component_file_input, "card-file"),
+            "URL": (component_article_url, "link"),
+            "File": (component_file_input, "file-text"),
         }
         selected_input = option_menu(
-            "Input Text",
+            None,
             list(input_funcs.keys()),
             icons=[f[1] for f in input_funcs.values()],
             menu_icon="list",

@@ -29,11 +29,18 @@ def run_demo():
     with navigation:
 
         selected_page = option_menu(
-            "Navigation",
-            list(pages.keys()),
+            menu_title="Navigation",
+            options=list(pages.keys()),
             icons=[f[1] for f in pages.values()],
             menu_icon="cast",
             default_index=0,
+            styles={
+                "container": {"border": "2px solid #818494"},
+                "icon": {"font-size": "22px"},
+                # "nav-item": {},
+                "nav-link": {"font-size": "20px", "text-align": "left"},
+                # "nav-link-selected": {"background-color": "green"},
+            }
         )
         component_select_pipeline(navigation)
 
