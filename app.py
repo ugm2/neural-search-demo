@@ -40,7 +40,7 @@ def run_demo():
                 # "nav-item": {},
                 "nav-link": {"font-size": "20px", "text-align": "left"},
                 # "nav-link-selected": {"background-color": "green"},
-            }
+            },
         )
         component_select_pipeline(navigation)
 
