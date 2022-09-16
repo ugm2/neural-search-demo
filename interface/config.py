@@ -1,7 +1,10 @@
 from interface.pages import page_landing_page, page_search, page_index
 
 # Define default Session Variables over the whole session.
-session_state_variables = {"pipeline": None}
+session_state_variables = {
+    "pipeline": None,
+    "pipeline_func_parameters": []
+}
 
 # Define Pages for the demo
 pages = {

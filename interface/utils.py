@@ -1,6 +1,6 @@
 from io import StringIO
 import core.pipelines as pipelines_functions
-from inspect import getmembers, isfunction
+from inspect import getmembers, isfunction, signature
 from newspaper import Article
 from PyPDF2 import PdfFileReader
 import streamlit as st
@@ -16,7 +16,8 @@ def get_pipelines():
     pipeline_names = [
         " ".join([n.capitalize() for n in name.split("_")]) for name in pipeline_names
     ]
-    return pipeline_names, pipeline_funcs
+    pipeline_func_parameters = [{key: value.default for key, value in signature(pipe_func).parameters.items()} for pipe_func in pipeline_funcs]
+    return pipeline_names, pipeline_funcs, pipeline_func_parameters
 
 
 @st.experimental_memo

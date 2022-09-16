@@ -6,6 +6,7 @@ from haystack import Pipeline
 from haystack.document_stores import InMemoryDocumentStore
 from haystack.nodes.retriever import DensePassageRetriever, TfidfRetriever
 from haystack.nodes.preprocessor import PreProcessor
+from haystack.nodes.ranker import SentenceTransformersRanker
 
 
 def keyword_search(
@@ -71,4 +72,21 @@ def dense_passage_retrieval(
         document_store, name="DocumentStore", inputs=["DPRRetriever"]
     )
 
+    return search_pipeline, index_pipeline
+
+def dense_passage_retrieval_ranker(
+    index="documents",
+    query_embedding_model="facebook/dpr-question_encoder-single-nq-base",
+    passage_embedding_model="facebook/dpr-ctx_encoder-single-nq-base",
+    ranker_model="cross-encoder/ms-marco-MiniLM-L-12-v2"
+):
+    search_pipeline, index_pipeline = dense_passage_retrieval(
+        index=index,
+        query_embedding_model=query_embedding_model,
+        passage_embedding_model=passage_embedding_model,
+    )
+    ranker = SentenceTransformersRanker(model_name_or_path=ranker_model)
+    
+    search_pipeline.add_node(ranker, name="Ranker", inputs=["DPRRetriever"])
+    
     return search_pipeline, index_pipeline

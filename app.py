@@ -37,9 +37,7 @@ def run_demo():
             styles={
                 "container": {"border": "2px solid #818494"},
                 "icon": {"font-size": "22px"},
-                # "nav-item": {},
                 "nav-link": {"font-size": "20px", "text-align": "left"},
-                # "nav-link-selected": {"background-color": "green"},
             },
         )
         component_select_pipeline(navigation)

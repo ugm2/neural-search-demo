@@ -4,7 +4,7 @@ from interface.draw_pipelines import get_pipeline_graph
 
 
 def component_select_pipeline(container):
-    pipeline_names, pipeline_funcs = get_pipelines()
+    pipeline_names, pipeline_funcs, pipeline_func_parameters = get_pipelines()
     with container:
         selected_pipeline = st.selectbox(
             "Select pipeline",
@@ -13,14 +13,29 @@ def component_select_pipeline(container):
             if "Keyword Search" in pipeline_names
             else 0,
         )
+        index_pipe = pipeline_names.index(selected_pipeline)
+        st.write("---")
+        st.header("Pipeline Parameters")
+        for parameter, value in pipeline_func_parameters[index_pipe].items():
+            if isinstance(value, str):
+                value = st.text_input(parameter, value)
+            elif isinstance(value, bool):
+                value = st.checkbox(parameter, value)
+            elif isinstance(value, int):
+                value = int(st.number_input(parameter, value))
+            elif isinstance(value, float):
+                value = float(st.number_input(parameter, value))
+            pipeline_func_parameters[index_pipe][parameter] = value
         if (
             st.session_state["pipeline"] is None
             or st.session_state["pipeline"]["name"] != selected_pipeline
+            or list(st.session_state["pipeline_func_parameters"][index_pipe].values()) != list(pipeline_func_parameters[index_pipe].values())
         ):
+            st.session_state["pipeline_func_parameters"] = pipeline_func_parameters
             (
                 search_pipeline,
                 index_pipeline,
-            ) = pipeline_funcs[pipeline_names.index(selected_pipeline)]()
+            ) = pipeline_funcs[index_pipe](**pipeline_func_parameters[index_pipe])
             st.session_state["pipeline"] = {
                 "name": selected_pipeline,
                 "search_pipeline": search_pipeline,
