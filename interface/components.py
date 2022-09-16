@@ -29,13 +29,13 @@ def component_select_pipeline(container):
         if (
             st.session_state["pipeline"] is None
             or st.session_state["pipeline"]["name"] != selected_pipeline
-            or list(st.session_state["pipeline_func_parameters"][index_pipe].values()) != list(pipeline_func_parameters[index_pipe].values())
+            or list(st.session_state["pipeline_func_parameters"][index_pipe].values())
+            != list(pipeline_func_parameters[index_pipe].values())
         ):
             st.session_state["pipeline_func_parameters"] = pipeline_func_parameters
-            (
-                search_pipeline,
-                index_pipeline,
-            ) = pipeline_funcs[index_pipe](**pipeline_func_parameters[index_pipe])
+            (search_pipeline, index_pipeline,) = pipeline_funcs[
+                index_pipe
+            ](**pipeline_func_parameters[index_pipe])
             st.session_state["pipeline"] = {
                 "name": selected_pipeline,
                 "search_pipeline": search_pipeline,

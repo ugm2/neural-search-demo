@@ -74,11 +74,12 @@ def dense_passage_retrieval(
 
     return search_pipeline, index_pipeline
 
+
 def dense_passage_retrieval_ranker(
     index="documents",
     query_embedding_model="facebook/dpr-question_encoder-single-nq-base",
     passage_embedding_model="facebook/dpr-ctx_encoder-single-nq-base",
-    ranker_model="cross-encoder/ms-marco-MiniLM-L-12-v2"
+    ranker_model="cross-encoder/ms-marco-MiniLM-L-12-v2",
 ):
     search_pipeline, index_pipeline = dense_passage_retrieval(
         index=index,
@@ -86,7 +87,7 @@ def dense_passage_retrieval_ranker(
         passage_embedding_model=passage_embedding_model,
     )
     ranker = SentenceTransformersRanker(model_name_or_path=ranker_model)
-    
+
     search_pipeline.add_node(ranker, name="Ranker", inputs=["DPRRetriever"])
-    
+
     return search_pipeline, index_pipeline

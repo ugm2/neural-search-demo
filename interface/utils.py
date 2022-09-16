@@ -16,7 +16,10 @@ def get_pipelines():
     pipeline_names = [
         " ".join([n.capitalize() for n in name.split("_")]) for name in pipeline_names
     ]
-    pipeline_func_parameters = [{key: value.default for key, value in signature(pipe_func).parameters.items()} for pipe_func in pipeline_funcs]
+    pipeline_func_parameters = [
+        {key: value.default for key, value in signature(pipe_func).parameters.items()}
+        for pipe_func in pipeline_funcs
+    ]
     return pipeline_names, pipeline_funcs, pipeline_func_parameters
 
 
