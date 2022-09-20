@@ -40,13 +40,16 @@ def component_select_pipeline(container):
                 "name": selected_pipeline,
                 "search_pipeline": search_pipeline,
                 "index_pipeline": index_pipeline,
+                "doc": pipeline_funcs[index_pipe].__doc__,
             }
 
 
-def component_show_pipeline(pipeline):
+def component_show_pipeline(pipeline, pipeline_name):
     """Draw the pipeline"""
     with st.expander("Show pipeline"):
-        fig = get_pipeline_graph(pipeline)
+        if pipeline["doc"] is not None:
+            st.markdown(pipeline["doc"])
+        fig = get_pipeline_graph(pipeline[pipeline_name])
         st.plotly_chart(fig, use_container_width=True)
 
 
