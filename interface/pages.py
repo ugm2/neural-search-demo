@@ -22,14 +22,16 @@ def page_landing_page(container):
         )
         st.markdown(
             "In this second version you can:"
-            "\n  - Index raw text, URLs and almost any file as documents"
-            "\n  - Use Dense Passage Retrieval & Keyword Search pipeline"
+            "\n  - Index raw text, URLs, CSVs, PDFs and Images"
+            "\n  - Use Dense Passage Retrieval, Keyword Search pipeline and DPR Ranker pipelines"
             "\n  - Search the indexed documents"
         )
         st.markdown(
             "TODO list:"
+            "\n  - File type classification and converter nodes"
+            "\n  - Audio to text support for indexing"
+            "\n  - Include text to audio to read responses"
             "\n  - Build other pipelines"
-            "\n  - [Optional] Include text to audio to read responses"
         )
         st.markdown(
             "Follow development of the tool [here](https://github.com/ugm2/neural-search-demo)"

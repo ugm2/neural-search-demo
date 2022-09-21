@@ -9,7 +9,7 @@ app_file: app.py
 pinned: true
 ---
 
-## Neural Search Demo
+## 🧠 Neural Search Demo 🔎
 
 This is a tool to allow indexing & search content using neural capabilities using [Haystack](https://haystack.deepset.ai/overview/intro) open-source framework.
 
