@@ -2,19 +2,14 @@
 Haystack Pipelines
 """
 
-from pathlib import Path
 from haystack import Pipeline
 from haystack.document_stores import InMemoryDocumentStore
 from haystack.nodes.retriever import DensePassageRetriever, TfidfRetriever
 from haystack.nodes.preprocessor import PreProcessor
 from haystack.nodes.ranker import SentenceTransformersRanker
-from haystack.nodes.audio.document_to_speech import DocumentToSpeech
-import os
 
-data_path = 'data/'
-os.makedirs(data_path, exist_ok=True)
 
-def keyword_search(index="documents", split_word_length=100, audio_output=False):
+def keyword_search(index="documents", split_word_length=100):
     """
     **Keyword Search Pipeline**
 
@@ -49,13 +44,6 @@ def keyword_search(index="documents", split_word_length=100, audio_output=False)
     index_pipeline.add_node(
         document_store, name="DocumentStore", inputs=["TfidfRetriever"]
     )
-    
-    if audio_output:
-        doc2speech = DocumentToSpeech(
-            model_name_or_path="espnet/kan-bayashi_ljspeech_vits",
-            generated_audio_dir=Path(data_path + 'audio'),
-        )
-        search_pipeline.add_node(doc2speech, name='DocumentToSpeech', inputs=['TfidfRetriever'])
 
     return search_pipeline, index_pipeline
 

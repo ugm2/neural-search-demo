@@ -32,17 +32,13 @@ def search(queries, pipeline):
         for res in matches:
             if not score_is_empty:
                 score_is_empty = True if res.score is None else False
-            match = {
-                "text": res.content,
-                "id": res.meta["id"],
-                "fragment_id": res.id,
-            }
-            if not score_is_empty:
-                match.update({'score': res.score})
-            if hasattr(res, 'content_audio'):
-                match.update({'content_audio': res.content_audio})
             query_results.append(
-                match
+                {
+                    "text": res.content,
+                    "score": res.score,
+                    "id": res.meta["id"],
+                    "fragment_id": res.id,
+                }
             )
         if not score_is_empty:
             query_results = sorted(
