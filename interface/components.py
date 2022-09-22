@@ -59,10 +59,10 @@ def component_show_search_result(container, results):
             st.markdown(f"### Match {idx+1}")
             st.markdown(f"**Text**: {document['text']}")
             st.markdown(f"**Document**: {document['id']}")
-            if 'score' in document:
+            if "score" in document:
                 st.markdown(f"**Score**: {document['score']:.3f}")
-            if 'content_audio' in document:
-                st.audio(str(document['content_audio']))
+            if "content_audio" in document:
+                st.audio(str(document["content_audio"]))
             st.markdown("---")
 
 

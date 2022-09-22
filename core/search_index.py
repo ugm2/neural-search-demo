@@ -38,12 +38,10 @@ def search(queries, pipeline):
                 "fragment_id": res.id,
             }
             if not score_is_empty:
-                match.update({'score': res.score})
-            if hasattr(res, 'content_audio'):
-                match.update({'content_audio': res.content_audio})
-            query_results.append(
-                match
-            )
+                match.update({"score": res.score})
+            if hasattr(res, "content_audio"):
+                match.update({"content_audio": res.content_audio})
+            query_results.append(match)
         if not score_is_empty:
             query_results = sorted(
                 query_results, key=lambda x: x["score"], reverse=True
