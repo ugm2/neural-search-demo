@@ -27,9 +27,9 @@ def component_select_pipeline(container):
             elif isinstance(value, bool):
                 value = st.checkbox(parameter, value)
             elif isinstance(value, int):
-                value = int(st.number_input(parameter, value))
+                value = int(st.number_input(parameter, value=value))
             elif isinstance(value, float):
-                value = float(st.number_input(parameter, value))
+                value = float(st.number_input(parameter, value=value))
             pipeline_func_parameters[index_pipe][parameter] = value
         if (
             st.session_state["pipeline"] is None

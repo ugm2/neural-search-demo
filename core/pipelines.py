@@ -14,8 +14,14 @@ import os
 data_path = "data/"
 os.makedirs(data_path, exist_ok=True)
 
+index = "documents"
 
-def keyword_search(index="documents", split_word_length=100, audio_output=False):
+document_store = InMemoryDocumentStore(index=index)
+
+
+def keyword_search(
+    index="documents", split_word_length=100, top_k=10, audio_output=False
+):
     """
     **Keyword Search Pipeline**
 
@@ -26,8 +32,10 @@ def keyword_search(index="documents", split_word_length=100, audio_output=False)
       - Documents that have more lexical overlap with the query are more likely to be relevant
       - Words that occur in fewer documents are more significant than words that occur in many documents
     """
-    document_store = InMemoryDocumentStore(index=index)
-    keyword_retriever = TfidfRetriever(document_store=(document_store))
+    global document_store
+    if index != document_store.index:
+        document_store = InMemoryDocumentStore(index=index)
+    keyword_retriever = TfidfRetriever(document_store=(document_store), top_k=top_k)
     processor = PreProcessor(
         clean_empty_lines=True,
         clean_whitespace=True,
@@ -65,6 +73,7 @@ def dense_passage_retrieval(
     split_word_length=100,
     query_embedding_model="facebook/dpr-question_encoder-single-nq-base",
     passage_embedding_model="facebook/dpr-ctx_encoder-single-nq-base",
+    top_k=10,
     audio_output=False,
 ):
     """
@@ -76,11 +85,14 @@ def dense_passage_retrieval(
       - One BERT base model to encode queries
       - Ranking of documents done by dot product similarity between query and document embeddings
     """
-    document_store = InMemoryDocumentStore(index=index)
+    global document_store
+    if index != document_store.index:
+        document_store = InMemoryDocumentStore(index=index)
     dpr_retriever = DensePassageRetriever(
         document_store=document_store,
         query_embedding_model=query_embedding_model,
         passage_embedding_model=passage_embedding_model,
+        top_k=top_k,
     )
     processor = PreProcessor(
         clean_empty_lines=True,
@@ -121,6 +133,7 @@ def dense_passage_retrieval_ranker(
     query_embedding_model="facebook/dpr-question_encoder-single-nq-base",
     passage_embedding_model="facebook/dpr-ctx_encoder-single-nq-base",
     ranker_model="cross-encoder/ms-marco-MiniLM-L-12-v2",
+    top_k=10,
     audio_output=False,
 ):
     """
@@ -137,8 +150,10 @@ def dense_passage_retrieval_ranker(
         split_word_length=split_word_length,
         query_embedding_model=query_embedding_model,
         passage_embedding_model=passage_embedding_model,
+        # top_k high to allow better recall, the ranker will handle the precision
+        top_k=10000000,
     )
-    ranker = SentenceTransformersRanker(model_name_or_path=ranker_model)
+    ranker = SentenceTransformersRanker(model_name_or_path=ranker_model, top_k=top_k)
 
     search_pipeline.add_node(ranker, name="Ranker", inputs=["DPRRetriever"])
 

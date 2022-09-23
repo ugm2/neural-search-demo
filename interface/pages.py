@@ -88,7 +88,9 @@ def page_index(container):
             index_results = None
             if st.button("Index"):
                 index_results = index(
-                    corpus, st.session_state["pipeline"]["index_pipeline"], clear_index
+                    documents=corpus,
+                    pipeline=st.session_state["pipeline"]["index_pipeline"],
+                    clear_index=clear_index,
                 )
                 st.session_state["doc_id"] = doc_id
             if index_results:
