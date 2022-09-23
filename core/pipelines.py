@@ -19,7 +19,7 @@ def keyword_search(index="documents", split_word_length=100):
 
       - Documents that have more lexical overlap with the query are more likely to be relevant
       - Words that occur in fewer documents are more significant than words that occur in many documents
-      
+
     :warning: **(HAYSTACK BUG) Keyword Search doesn't work if you reindex:** Please refresh page in order to reindex
     """
     document_store = InMemoryDocumentStore(index=index)
