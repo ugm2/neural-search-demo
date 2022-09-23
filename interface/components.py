@@ -1,5 +1,10 @@
 import streamlit as st
-from interface.utils import get_pipelines, extract_text_from_url, extract_text_from_file, reset_vars_data
+from interface.utils import (
+    get_pipelines,
+    extract_text_from_url,
+    extract_text_from_file,
+    reset_vars_data,
+)
 from interface.draw_pipelines import get_pipeline_graph
 
 

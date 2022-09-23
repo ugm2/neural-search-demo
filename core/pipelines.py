@@ -141,14 +141,12 @@ def dense_passage_retrieval_ranker(
     ranker = SentenceTransformersRanker(model_name_or_path=ranker_model)
 
     search_pipeline.add_node(ranker, name="Ranker", inputs=["DPRRetriever"])
-    
+
     if audio_output:
         doc2speech = DocumentToSpeech(
             model_name_or_path="espnet/kan-bayashi_ljspeech_vits",
             generated_audio_dir=Path(data_path + "audio"),
         )
-        search_pipeline.add_node(
-            doc2speech, name="DocumentToSpeech", inputs=["Ranker"]
-        )
+        search_pipeline.add_node(doc2speech, name="DocumentToSpeech", inputs=["Ranker"])
 
     return search_pipeline, index_pipeline
