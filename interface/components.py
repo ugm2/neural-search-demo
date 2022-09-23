@@ -42,11 +42,15 @@ def component_select_pipeline(container):
                 "index_pipeline": index_pipeline,
                 "doc": pipeline_funcs[index_pipe].__doc__,
             }
+            st.session_state["doc_id"] = 0
 
 
 def component_show_pipeline(pipeline, pipeline_name):
     """Draw the pipeline"""
-    with st.expander("Show pipeline"):
+    expander_text = "Show pipeline"
+    if pipeline["doc"] is not None and "BUG" in pipeline["doc"]:
+        expander_text += "  ⚠️"
+    with st.expander(expander_text):
         if pipeline["doc"] is not None:
             st.markdown(pipeline["doc"])
         fig = get_pipeline_graph(pipeline[pipeline_name])
@@ -59,41 +63,39 @@ def component_show_search_result(container, results):
             st.markdown(f"### Match {idx+1}")
             st.markdown(f"**Text**: {document['text']}")
             st.markdown(f"**Document**: {document['id']}")
+            if "_split_id" in document["meta"]:
+                st.markdown(f"**Document Chunk**: {document['meta']['_split_id']}")
             if document["score"] is not None:
                 st.markdown(f"**Score**: {document['score']:.3f}")
             st.markdown("---")
 
 
-def component_text_input(container):
+def component_text_input(container, doc_id):
     """Draw the Text Input widget"""
     with container:
         texts = []
-        doc_id = 1
         with st.expander("Enter documents"):
             while True:
                 text = st.text_input(f"Document {doc_id}", key=doc_id)
                 if text != "":
-                    texts.append({"text": text})
+                    texts.append({"text": text, "doc_id": doc_id})
                     doc_id += 1
                     st.markdown("---")
                 else:
                     break
-        corpus = [
-            {"text": doc["text"], "id": doc_id} for doc_id, doc in enumerate(texts)
-        ]
-        return corpus
+        corpus = [{"text": doc["text"], "id": doc["doc_id"]} for doc in texts]
+        return corpus, doc_id
 
 
-def component_article_url(container):
+def component_article_url(container, doc_id):
     """Draw the Article URL widget"""
     with container:
         urls = []
-        doc_id = 1
         with st.expander("Enter URLs"):
             while True:
                 url = st.text_input(f"URL {doc_id}", key=doc_id)
                 if url != "":
-                    urls.append({"text": extract_text_from_url(url)})
+                    urls.append({"text": extract_text_from_url(url), "doc_id": doc_id})
                     doc_id += 1
                     st.markdown("---")
                 else:
@@ -101,19 +103,16 @@ def component_article_url(container):
 
         for idx, doc in enumerate(urls):
             with st.expander(f"Preview URL {idx}"):
-                st.write(doc)
+                st.write(doc["text"])
 
-        corpus = [
-            {"text": doc["text"], "id": doc_id} for doc_id, doc in enumerate(urls)
-        ]
-        return corpus
+        corpus = [{"text": doc["text"], "id": doc["doc_id"]} for doc in urls]
+        return corpus, doc_id
 
 
-def component_file_input(container):
+def component_file_input(container, doc_id):
     """Draw the extract text from file widget"""
     with container:
         files = []
-        doc_id = 1
         with st.expander("Enter Files"):
             while True:
                 file = st.file_uploader(
@@ -122,7 +121,7 @@ def component_file_input(container):
                 if file != None:
                     extracted_text = extract_text_from_file(file)
                     if extracted_text != None:
-                        files.append({"text": extracted_text})
+                        files.append({"text": extracted_text, "doc_id": doc_id})
                         doc_id += 1
                         st.markdown("---")
                     else:
@@ -132,9 +131,7 @@ def component_file_input(container):
 
         for idx, doc in enumerate(files):
             with st.expander(f"Preview File {idx}"):
-                st.write(doc)
+                st.write(doc["text"])
 
-        corpus = [
-            {"text": doc["text"], "id": doc_id} for doc_id, doc in enumerate(files)
-        ]
-        return corpus
+        corpus = [{"text": doc["text"], "id": doc["doc_id"]} for doc in files]
+        return corpus, doc_id
