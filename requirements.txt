@@ -6,3 +6,7 @@ plotly==5.10.0
 newspaper3k==0.2.8
 PyPDF2==2.10.7
 pytesseract==0.3.10
+soundfile==0.10.3.post1
+espnet
+pydub==0.25.1
+espnet_model_zoo==0.1.7
