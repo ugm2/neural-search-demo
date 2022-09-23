@@ -39,10 +39,7 @@ def keyword_search(index="documents", split_word_length=100):
     index_pipeline = Pipeline()
     index_pipeline.add_node(processor, name="Preprocessor", inputs=["File"])
     index_pipeline.add_node(
-        keyword_retriever, name="TfidfRetriever", inputs=["Preprocessor"]
-    )
-    index_pipeline.add_node(
-        document_store, name="DocumentStore", inputs=["TfidfRetriever"]
+        document_store, name="DocumentStore", inputs=["Preprocessor"]
     )
 
     return search_pipeline, index_pipeline

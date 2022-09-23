@@ -78,6 +78,8 @@ def page_index(container):
             default_index=0,
             orientation="horizontal",
         )
+        
+        clear_index = st.sidebar.checkbox('Clear Index', True)
 
         corpus = input_funcs[selected_input][0](container)
 
@@ -87,6 +89,7 @@ def page_index(container):
                 index_results = index(
                     corpus,
                     st.session_state["pipeline"]["index_pipeline"],
+                    clear_index
                 )
             if index_results:
                 st.write(index_results)

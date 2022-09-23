@@ -1,4 +1,5 @@
 from haystack.schema import Document
+from haystack.document_stores import BaseDocumentStore
 import uuid
 
 
@@ -17,8 +18,14 @@ def format_docs(documents):
     return db_docs, [doc.meta["id"] for doc in db_docs]
 
 
-def index(documents, pipeline):
+def index(documents, pipeline, clear_index=True):
     documents, doc_ids = format_docs(documents)
+    if clear_index:
+        document_stores = pipeline.get_nodes_by_class(
+            class_type=BaseDocumentStore
+        )
+        for docstore in document_stores:
+            docstore.delete_index(docstore.index)
     pipeline.run(documents=documents)
     return doc_ids
 

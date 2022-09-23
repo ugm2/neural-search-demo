@@ -29,7 +29,7 @@ def run_demo():
     with navigation:
 
         selected_page = option_menu(
-            menu_title="Navigation",
+            menu_title=None,
             options=list(pages.keys()),
             icons=[f[1] for f in pages.values()],
             menu_icon="cast",
