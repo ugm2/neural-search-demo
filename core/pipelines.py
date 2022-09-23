@@ -150,8 +150,7 @@ def dense_passage_retrieval_ranker(
         split_word_length=split_word_length,
         query_embedding_model=query_embedding_model,
         passage_embedding_model=passage_embedding_model,
-        # top_k high to allow better recall, the ranker will handle the precision
-        top_k=10000000,
+        top_k=top_k,
     )
     ranker = SentenceTransformersRanker(model_name_or_path=ranker_model, top_k=top_k)
 

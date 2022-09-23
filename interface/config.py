@@ -4,6 +4,7 @@ from interface.pages import page_landing_page, page_search, page_index
 session_state_variables = {
     "pipeline": None,
     "pipeline_func_parameters": [],
+    "search_results": None,
     "doc_id": 0,
 }
 

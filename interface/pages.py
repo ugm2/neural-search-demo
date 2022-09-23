@@ -49,11 +49,12 @@ def page_search(container):
         component_show_pipeline(st.session_state["pipeline"], "search_pipeline")
 
         if st.button("Search"):
-            st.session_state["search_results"] = search(
-                queries=[query],
-                pipeline=st.session_state["pipeline"]["search_pipeline"],
-            )
-        if "search_results" in st.session_state:
+            with st.spinner("Searching..."):
+                st.session_state["search_results"] = search(
+                    queries=[query],
+                    pipeline=st.session_state["pipeline"]["search_pipeline"],
+                )
+        if st.session_state["search_results"] is not None:
             component_show_search_result(
                 container=container, results=st.session_state["search_results"][0]
             )
@@ -87,11 +88,12 @@ def page_index(container):
         if len(corpus) > 0:
             index_results = None
             if st.button("Index"):
-                index_results = index(
-                    documents=corpus,
-                    pipeline=st.session_state["pipeline"]["index_pipeline"],
-                    clear_index=clear_index,
-                )
-                st.session_state["doc_id"] = doc_id
+                with st.spinner("Indexing..."):
+                    index_results = index(
+                        documents=corpus,
+                        pipeline=st.session_state["pipeline"]["index_pipeline"],
+                        clear_index=clear_index,
+                    )
+                    st.session_state["doc_id"] = doc_id
             if index_results:
                 st.write(index_results)

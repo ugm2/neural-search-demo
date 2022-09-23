@@ -28,6 +28,7 @@ def get_pipelines():
 
 def reset_vars_data():
     st.session_state["doc_id"] = 0
+    st.session_state["search_results"] = None
     # Delete data files
     shutil.rmtree(data_path)
     os.makedirs(data_path, exist_ok=True)
