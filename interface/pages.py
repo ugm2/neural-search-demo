@@ -79,14 +79,17 @@ def page_index(container):
             orientation="horizontal",
         )
 
-        corpus = input_funcs[selected_input][0](container)
+        clear_index = st.sidebar.checkbox("Clear Index", True)
+
+        doc_id = st.session_state["doc_id"]
+        corpus, doc_id = input_funcs[selected_input][0](container, doc_id)
 
         if len(corpus) > 0:
             index_results = None
             if st.button("Index"):
                 index_results = index(
-                    corpus,
-                    st.session_state["pipeline"]["index_pipeline"],
+                    corpus, st.session_state["pipeline"]["index_pipeline"], clear_index
                 )
+                st.session_state["doc_id"] = doc_id
             if index_results:
                 st.write(index_results)

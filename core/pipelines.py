@@ -25,6 +25,8 @@ def keyword_search(index="documents", split_word_length=100, audio_output=False)
 
       - Documents that have more lexical overlap with the query are more likely to be relevant
       - Words that occur in fewer documents are more significant than words that occur in many documents
+
+    :warning: **(HAYSTACK BUG) Keyword Search doesn't work if you reindex:** Please refresh page in order to reindex
     """
     document_store = InMemoryDocumentStore(index=index)
     keyword_retriever = TfidfRetriever(document_store=(document_store))
@@ -45,10 +47,7 @@ def keyword_search(index="documents", split_word_length=100, audio_output=False)
     index_pipeline = Pipeline()
     index_pipeline.add_node(processor, name="Preprocessor", inputs=["File"])
     index_pipeline.add_node(
-        keyword_retriever, name="TfidfRetriever", inputs=["Preprocessor"]
-    )
-    index_pipeline.add_node(
-        document_store, name="DocumentStore", inputs=["TfidfRetriever"]
+        document_store, name="DocumentStore", inputs=["Preprocessor"]
     )
 
     if audio_output:
@@ -68,6 +67,7 @@ def dense_passage_retrieval(
     split_word_length=100,
     query_embedding_model="facebook/dpr-question_encoder-single-nq-base",
     passage_embedding_model="facebook/dpr-ctx_encoder-single-nq-base",
+    audio_output=False
 ):
     """
     **Dense Passage Retrieval Pipeline**
@@ -104,6 +104,15 @@ def dense_passage_retrieval(
     index_pipeline.add_node(
         document_store, name="DocumentStore", inputs=["DPRRetriever"]
     )
+    
+    if audio_output:
+        doc2speech = DocumentToSpeech(
+            model_name_or_path="espnet/kan-bayashi_ljspeech_vits",
+            generated_audio_dir=Path(data_path + "audio"),
+        )
+        search_pipeline.add_node(
+            doc2speech, name="DocumentToSpeech", inputs=["DPRRetriever"]
+        )
 
     return search_pipeline, index_pipeline
 
