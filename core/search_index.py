@@ -45,6 +45,7 @@ def search(queries, pipeline):
                     "score": res.score,
                     "id": res.meta["id"],
                     "fragment_id": res.id,
+                    "meta": res.meta
                 }
             )
         if not score_is_empty:
