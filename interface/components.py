@@ -1,5 +1,5 @@
 import streamlit as st
-from interface.utils import get_pipelines, extract_text_from_url, extract_text_from_file
+from interface.utils import get_pipelines, extract_text_from_url, extract_text_from_file, reset_vars_data
 from interface.draw_pipelines import get_pipeline_graph
 
 
@@ -42,7 +42,7 @@ def component_select_pipeline(container):
                 "index_pipeline": index_pipeline,
                 "doc": pipeline_funcs[index_pipe].__doc__,
             }
-            st.session_state["doc_id"] = 0
+            reset_vars_data()
 
 
 def component_show_pipeline(pipeline, pipeline_name):
