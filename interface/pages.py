@@ -25,12 +25,12 @@ def page_landing_page(container):
             "\n  - Index raw text, URLs, CSVs, PDFs and Images"
             "\n  - Use Dense Passage Retrieval, Keyword Search pipeline and DPR Ranker pipelines"
             "\n  - Search the indexed documents"
+            "\n  - Read your responses out loud using the `audio_output` option!"
         )
         st.markdown(
             "TODO list:"
             "\n  - File type classification and converter nodes"
             "\n  - Audio to text support for indexing"
-            "\n  - Include text to audio to read responses"
             "\n  - Build other pipelines"
         )
         st.markdown(

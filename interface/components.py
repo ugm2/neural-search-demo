@@ -1,5 +1,10 @@
 import streamlit as st
-from interface.utils import get_pipelines, extract_text_from_url, extract_text_from_file
+from interface.utils import (
+    get_pipelines,
+    extract_text_from_url,
+    extract_text_from_file,
+    reset_vars_data,
+)
 from interface.draw_pipelines import get_pipeline_graph
 
 
@@ -42,7 +47,7 @@ def component_select_pipeline(container):
                 "index_pipeline": index_pipeline,
                 "doc": pipeline_funcs[index_pipe].__doc__,
             }
-            st.session_state["doc_id"] = 0
+            reset_vars_data()
 
 
 def component_show_pipeline(pipeline, pipeline_name):
@@ -65,8 +70,10 @@ def component_show_search_result(container, results):
             st.markdown(f"**Document**: {document['id']}")
             if "_split_id" in document["meta"]:
                 st.markdown(f"**Document Chunk**: {document['meta']['_split_id']}")
-            if document["score"] is not None:
+            if "score" in document:
                 st.markdown(f"**Score**: {document['score']:.3f}")
+            if "content_audio" in document:
+                st.audio(str(document["content_audio"]))
             st.markdown("---")
 
 

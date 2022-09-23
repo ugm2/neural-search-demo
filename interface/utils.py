@@ -1,5 +1,8 @@
 from io import StringIO
+import os
+import shutil
 import core.pipelines as pipelines_functions
+from core.pipelines import data_path
 from inspect import getmembers, isfunction, signature
 from newspaper import Article
 from PyPDF2 import PdfFileReader
@@ -21,6 +24,13 @@ def get_pipelines():
         for pipe_func in pipeline_funcs
     ]
     return pipeline_names, pipeline_funcs, pipeline_func_parameters
+
+
+def reset_vars_data():
+    st.session_state["doc_id"] = 0
+    # Delete data files
+    shutil.rmtree(data_path)
+    os.makedirs(data_path, exist_ok=True)
 
 
 @st.experimental_memo
