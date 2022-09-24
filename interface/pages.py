@@ -96,5 +96,3 @@ def page_index(container):
                     )
                     st.session_state["doc_id"] = doc_id
                 st.success(f"{len(index_results)} documents indexed successfully!")
-            if index_results:
-                st.write(index_results)
