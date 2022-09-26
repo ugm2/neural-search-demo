@@ -4,19 +4,43 @@ Haystack Pipelines
 
 from pathlib import Path
 from haystack import Pipeline
-from haystack.document_stores import InMemoryDocumentStore
-from haystack.nodes.retriever import DensePassageRetriever, TfidfRetriever
+from haystack.document_stores import InMemoryDocumentStore, ElasticsearchDocumentStore
+from haystack.nodes.retriever import (
+    DensePassageRetriever,
+    TfidfRetriever,
+    BM25Retriever,
+)
 from haystack.nodes.preprocessor import PreProcessor
 from haystack.nodes.ranker import SentenceTransformersRanker
 from haystack.nodes.audio.document_to_speech import DocumentToSpeech
+import logging
 import os
+
+logger = logging.getLogger("Neural Search Demo - Pipelines")
+logger.setLevel(os.environ.get("LOGGER_LEVEL", logging.WARNING))
 
 data_path = "data/"
 os.makedirs(data_path, exist_ok=True)
 
 index = "documents"
 
-document_store = InMemoryDocumentStore(index=index)
+
+def init_document_store(index):
+    global document_store
+    # Try instantiating of Elasticsearch Document Store or default to InMemoryDocumentStore
+    try:
+        es_host_port = os.environ.get("ELASTIC_HOST", "localhost:9200")
+        es_host = es_host_port.split(":")[0]
+        es_port = es_host_port.split(":")[1]
+
+        document_store = ElasticsearchDocumentStore(host=es_host, port=es_port)
+    except Exception as e:
+        logger.error(f"Error loading the ElasticsearchDocumentStore. Detail: {e}")
+
+        document_store = InMemoryDocumentStore(index=index)
+
+
+init_document_store(index)
 
 
 def keyword_search(
@@ -34,8 +58,12 @@ def keyword_search(
     """
     global document_store
     if index != document_store.index:
-        document_store = InMemoryDocumentStore(index=index)
-    keyword_retriever = TfidfRetriever(document_store=(document_store), top_k=top_k)
+        init_document_store(index)
+
+    if isinstance(document_store, ElasticsearchDocumentStore):
+        keyword_retriever = BM25Retriever(document_store=(document_store), top_k=top_k)
+    else:
+        keyword_retriever = TfidfRetriever(document_store=(document_store), top_k=top_k)
     processor = PreProcessor(
         clean_empty_lines=True,
         clean_whitespace=True,
@@ -87,7 +115,7 @@ def dense_passage_retrieval(
     """
     global document_store
     if index != document_store.index:
-        document_store = InMemoryDocumentStore(index=index)
+        init_document_store(index)
     dpr_retriever = DensePassageRetriever(
         document_store=document_store,
         query_embedding_model=query_embedding_model,
