@@ -52,4 +52,4 @@ Finally, run app by executing the following:
 streamlit run app.py
 ```
 
-And go to http://localhost:8501/ to start navigating the app.
+And go to [localhost:8501](http://localhost:8501/) to start navigating the app.
