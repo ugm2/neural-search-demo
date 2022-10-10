@@ -19,4 +19,4 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git push https://ugaray96:$HF_TOKEN@huggingface.co/spaces/ugaray96/neural-search ${GITHUB_REF_NAME}
+          git push https://ugaray96:$HF_TOKEN@huggingface.co/spaces/ugaray96/neural-search ${GITHUB_REF_NAME}:main
