@@ -17,7 +17,7 @@ import logging
 import os
 
 logger = logging.getLogger("Neural Search Demo - Pipelines")
-logger.setLevel(os.environ.get("LOGGER_LEVEL", logging.DEBUG))
+logger.setLevel(os.environ.get("LOGGER_LEVEL", logging.WARNING))
 
 data_path = "data/"
 os.makedirs(data_path, exist_ok=True)
@@ -29,7 +29,7 @@ def init_document_store(index):
     global document_store
     # Try instantiating of Elasticsearch Document Store or default to InMemoryDocumentStore
     try:
-        logging.debug(
+        logging.info(
             f"'ELASTIC_HOST' env var value: {os.environ.get('ELASTIC_HOST', None)}"
         )
         es_host_port = os.environ.get("ELASTIC_HOST", "localhost:9200")
