@@ -1,3 +1,2 @@
 tesseract-ocr-all
 apt-transport-https
-elasticsearch
