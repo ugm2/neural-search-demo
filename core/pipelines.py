@@ -29,7 +29,9 @@ def init_document_store(index):
     global document_store
     # Try instantiating of Elasticsearch Document Store or default to InMemoryDocumentStore
     try:
-        logging.debug(f"'ELASTIC_HOST' env var value: {os.environ.get('ELASTIC_HOST', None)}")
+        logging.debug(
+            f"'ELASTIC_HOST' env var value: {os.environ.get('ELASTIC_HOST', None)}"
+        )
         es_host_port = os.environ.get("ELASTIC_HOST", "localhost:9200")
         es_host = es_host_port.split(":")[0]
         es_port = es_host_port.split(":")[1]
