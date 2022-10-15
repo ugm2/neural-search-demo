@@ -1,5 +1,7 @@
 FROM python:3.8
 
+RUN echo "Running Docker"
+
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends ffmpeg \
     && rm -rf /var/lib/apt/lists/*
