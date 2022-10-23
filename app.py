@@ -1,4 +1,8 @@
 import streamlit as st
+from testcontainers.elasticsearch import ElasticSearchContainer
+
+es = ElasticSearchContainer(image="docker.elastic.co/elasticsearch/elasticsearch:7.9.2")
+es.start()
 
 st.set_page_config(
     page_title="Neural Search",

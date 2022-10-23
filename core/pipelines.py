@@ -23,19 +23,14 @@ data_path = "data/"
 os.makedirs(data_path, exist_ok=True)
 
 index = "documents"
+es_host = "127.0.0.1"
+es_port = 9200
 
 
 def init_document_store(index):
     global document_store
     # Try instantiating of Elasticsearch Document Store or default to InMemoryDocumentStore
     try:
-        logging.info(
-            f"'ELASTIC_HOST' env var value: {os.environ.get('ELASTIC_HOST', None)}"
-        )
-        es_host_port = os.environ.get("ELASTIC_HOST", "localhost:9200")
-        es_host = es_host_port.split(":")[0]
-        es_port = es_host_port.split(":")[1]
-
         document_store = ElasticsearchDocumentStore(host=es_host, port=es_port)
     except Exception as e:
         logger.error(f"Error loading the ElasticsearchDocumentStore. Detail: {e}")
