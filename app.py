@@ -1,7 +1,11 @@
 import streamlit as st
-from testcontainers.elasticsearch import ElasticSearchContainer
+from core.elasticsearch import CustomElasticSearchContainer
 
-es = ElasticSearchContainer(image="docker.elastic.co/elasticsearch/elasticsearch:7.9.2")
+# TODO: Only initialised once!
+# TODO: Streamlit method to close and remove container when streamlit finishes
+es = CustomElasticSearchContainer(
+    image="docker.elastic.co/elasticsearch/elasticsearch:7.9.2"
+)
 es.start()
 
 st.set_page_config(
