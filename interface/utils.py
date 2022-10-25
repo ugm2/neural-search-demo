@@ -10,6 +10,16 @@ import streamlit as st
 import pandas as pd
 import pytesseract
 from PIL import Image
+from core.elasticsearch import CustomElasticSearchContainer
+
+
+@st.experimental_singleton
+def get_elasticsearch():
+    # TODO: Streamlit method to close and remove container when streamlit finishes
+    es = CustomElasticSearchContainer(
+        image="docker.elastic.co/elasticsearch/elasticsearch:7.9.2"
+    )
+    return es
 
 
 def get_pipelines():
