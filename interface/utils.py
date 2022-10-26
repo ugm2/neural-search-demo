@@ -13,15 +13,6 @@ from PIL import Image
 from core.elasticsearch import CustomElasticSearchContainer
 
 
-@st.experimental_singleton
-def get_elasticsearch():
-    # TODO: Streamlit method to close and remove container when streamlit finishes
-    es = CustomElasticSearchContainer(
-        image="docker.elastic.co/elasticsearch/elasticsearch:7.9.2"
-    )
-    return es
-
-
 def get_pipelines():
     pipeline_names, pipeline_funcs = list(
         zip(*getmembers(pipelines_functions, isfunction))

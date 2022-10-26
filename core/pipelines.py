@@ -16,6 +16,8 @@ from haystack.nodes.audio.document_to_speech import DocumentToSpeech
 import logging
 import os
 
+from core.elasticsearch import CustomElasticSearchContainer
+
 logger = logging.getLogger("Neural Search Demo - Pipelines")
 logger.setLevel(os.environ.get("LOGGER_LEVEL", logging.WARNING))
 
@@ -23,8 +25,16 @@ data_path = "data/"
 os.makedirs(data_path, exist_ok=True)
 
 index = "documents"
-es_host = "127.0.0.1"
+es_host = "localhost"
 es_port = 9200
+
+es = CustomElasticSearchContainer(
+    image="docker.elastic.co/elasticsearch/elasticsearch:7.9.2",
+    port_to_expose=es_port,
+    name="elasticsearch_neural",
+)
+es.start_if_not_running()
+# TODO: ElasticsearchDocumentStore not connecting properly
 
 
 def init_document_store(index):

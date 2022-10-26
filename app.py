@@ -11,7 +11,6 @@ st.set_page_config(
 from streamlit_option_menu import option_menu
 from interface.config import session_state_variables, pages
 from interface.components import component_select_pipeline
-from interface.utils import get_elasticsearch
 
 # Initialization of session state
 for key, value in session_state_variables.items():
@@ -20,9 +19,6 @@ for key, value in session_state_variables.items():
 
 
 def run_demo():
-
-    es = get_elasticsearch()
-    es.start_if_not_running()
 
     # TODO: Wait before ES is up so the pipeline gets connected properly
     main_page = st.container()
