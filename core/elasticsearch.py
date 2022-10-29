@@ -71,7 +71,3 @@ class CustomElasticSearchContainer(ElasticSearchContainer):
             self._container.restart()
         logger.info("Container started: %s", self._container.short_id)
         return self
-
-    # TODO: Method to stop and remove container when deleted (garbage collector)
-
-    # TODO: Don't create multiple ES instances with different names

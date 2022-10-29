@@ -37,10 +37,15 @@ es.start_if_not_running()
 # TODO: ElasticsearchDocumentStore not connecting properly
 
 
-def init_document_store(index):
+def init_document_store(index, connect_tries=0):
     global document_store
     # Try instantiating of Elasticsearch Document Store or default to InMemoryDocumentStore
     try:
+        while connect_tries > 0:
+            print(es._container_already_running())
+            if es._container_already_running():
+                break
+            connect_tries -= 1
         document_store = ElasticsearchDocumentStore(host=es_host, port=es_port)
     except Exception as e:
         logger.error(f"Error loading the ElasticsearchDocumentStore. Detail: {e}")
@@ -48,7 +53,7 @@ def init_document_store(index):
         document_store = InMemoryDocumentStore(index=index)
 
 
-init_document_store(index)
+init_document_store(index, 100)
 
 
 def keyword_search(
