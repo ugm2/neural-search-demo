@@ -27,12 +27,10 @@ class CustomElasticSearchContainer(ElasticSearchContainer):
         )
         self._name = name
         self._kwargs = kwargs
+        self._container = None
 
     def _container_already_running(self):
         container = self.get_wrapped_container()
-        print(
-            "Container status: ", container.status if container is not None else "None"
-        )
         return container is not None and container.status == "created"
 
     @wait_container_is_ready()
