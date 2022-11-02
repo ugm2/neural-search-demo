@@ -22,12 +22,12 @@ class CustomElasticSearchContainer(ElasticSearchContainer):
         name="elasticsearch",
         **kwargs,
     ):
-        super(CustomElasticSearchContainer, self).__init__(
-            image, port_to_expose, **kwargs
-        )
         self._name = name
         self._kwargs = kwargs
         self._container = None
+        super(CustomElasticSearchContainer, self).__init__(
+            image, port_to_expose, **kwargs
+        )
 
     def _container_already_running(self):
         container = self.get_wrapped_container()
