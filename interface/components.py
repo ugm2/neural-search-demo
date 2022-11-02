@@ -20,18 +20,17 @@ def component_select_pipeline(container):
                 else 0,
             )
             index_pipe = pipeline_names.index(selected_pipeline)
-            st.write("---")
-            st.header("Pipeline Parameters")
-            for parameter, value in pipeline_func_parameters[index_pipe].items():
-                if isinstance(value, str):
-                    value = st.text_input(parameter, value)
-                elif isinstance(value, bool):
-                    value = st.checkbox(parameter, value)
-                elif isinstance(value, int):
-                    value = int(st.number_input(parameter, value=value))
-                elif isinstance(value, float):
-                    value = float(st.number_input(parameter, value=value))
-                pipeline_func_parameters[index_pipe][parameter] = value
+            with st.expander("Pipeline parameters"):
+                for parameter, value in pipeline_func_parameters[index_pipe].items():
+                    if isinstance(value, str):
+                        value = st.text_input(parameter, value)
+                    elif isinstance(value, bool):
+                        value = st.checkbox(parameter, value)
+                    elif isinstance(value, int):
+                        value = int(st.number_input(parameter, value=value))
+                    elif isinstance(value, float):
+                        value = float(st.number_input(parameter, value=value))
+                    pipeline_func_parameters[index_pipe][parameter] = value
             if (
                 st.session_state["pipeline"] is None
                 or st.session_state["pipeline"]["name"] != selected_pipeline

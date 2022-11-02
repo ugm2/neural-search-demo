@@ -20,7 +20,7 @@ class CustomElasticSearchContainer(ElasticSearchContainer):
         image="docker.elastic.co/elasticsearch/elasticsearch:7.9.2",
         port_to_expose=9200,
         name="elasticsearch",
-        **kwargs
+        **kwargs,
     ):
         super(CustomElasticSearchContainer, self).__init__(
             image, port_to_expose, **kwargs
@@ -30,6 +30,9 @@ class CustomElasticSearchContainer(ElasticSearchContainer):
 
     def _container_already_running(self):
         container = self.get_wrapped_container()
+        print(
+            "Container status: ", container.status if container is not None else "None"
+        )
         return container is not None and container.status == "created"
 
     @wait_container_is_ready()
@@ -65,7 +68,7 @@ class CustomElasticSearchContainer(ElasticSearchContainer):
                 ports=self.ports,
                 name=self._name,
                 volumes=self.volumes,
-                **self._kwargs
+                **self._kwargs,
             )
         else:
             self._container.restart()

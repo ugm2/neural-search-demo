@@ -3,19 +3,22 @@ import os
 import shutil
 import core.pipelines as pipelines_functions
 from core.pipelines import data_path
-from inspect import getmembers, isfunction, signature
+from inspect import getmembers, signature
 from newspaper import Article
 from PyPDF2 import PdfFileReader
 import streamlit as st
 import pandas as pd
 import pytesseract
 from PIL import Image
-from core.elasticsearch import CustomElasticSearchContainer
+
+
+def elegible_pipeline_function(object):
+    return hasattr(object, "is_pipeline") and object.is_pipeline
 
 
 def get_pipelines():
     pipeline_names, pipeline_funcs = list(
-        zip(*getmembers(pipelines_functions, isfunction))
+        zip(*getmembers(pipelines_functions, elegible_pipeline_function))
     )
     pipeline_names = [
         " ".join([n.capitalize() for n in name.split("_")]) for name in pipeline_names

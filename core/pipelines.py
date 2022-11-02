@@ -15,8 +15,11 @@ from haystack.nodes.ranker import SentenceTransformersRanker
 from haystack.nodes.audio.document_to_speech import DocumentToSpeech
 import logging
 import os
+from time import sleep
 
 from core.elasticsearch import CustomElasticSearchContainer
+from core.utils import is_pipeline
+
 
 logger = logging.getLogger("Neural Search Demo - Pipelines")
 logger.setLevel(os.environ.get("LOGGER_LEVEL", logging.WARNING))
@@ -25,7 +28,7 @@ data_path = "data/"
 os.makedirs(data_path, exist_ok=True)
 
 index = "documents"
-es_host = "localhost"
+es_host = "127.0.0.1"
 es_port = 9200
 
 es = CustomElasticSearchContainer(
@@ -34,28 +37,35 @@ es = CustomElasticSearchContainer(
     name="elasticsearch_neural",
 )
 es.start_if_not_running()
-# TODO: ElasticsearchDocumentStore not connecting properly
 
 
-def init_document_store(index, connect_tries=0):
-    global document_store
+def init_document_store(document_store, index, initial_rump_up_time=20):
     # Try instantiating of Elasticsearch Document Store or default to InMemoryDocumentStore
     try:
-        while connect_tries > 0:
-            print(es._container_already_running())
-            if es._container_already_running():
-                break
-            connect_tries -= 1
-        document_store = ElasticsearchDocumentStore(host=es_host, port=es_port)
+        document_store = ElasticsearchDocumentStore(
+            host=es_host, port=es_port, index=index
+        )
     except Exception as e:
-        logger.error(f"Error loading the ElasticsearchDocumentStore. Detail: {e}")
+        logger.info(
+            f"First connection to Elasticsearch failed. Waiting {initial_rump_up_time} seconds for the initial ramp up"
+        )
+        sleep(initial_rump_up_time)
+        try:
+            document_store = ElasticsearchDocumentStore(
+                host=es_host, port=es_port, index=index
+            )
+            logger.info("Elasticsearch connected")
+        except Exception as e:
+            logger.error(f"Error loading the ElasticsearchDocumentStore. Detail: {e}")
 
-        document_store = InMemoryDocumentStore(index=index)
+            document_store = InMemoryDocumentStore(index=index)
+    return document_store
 
 
-init_document_store(index, 100)
+document_store = init_document_store(None, index)
 
 
+@is_pipeline
 def keyword_search(
     index="documents", split_word_length=100, top_k=10, audio_output=False
 ):
@@ -71,7 +81,7 @@ def keyword_search(
     """
     global document_store
     if index != document_store.index:
-        init_document_store(index)
+        document_store = init_document_store(document_store, index)
 
     if isinstance(document_store, ElasticsearchDocumentStore):
         keyword_retriever = BM25Retriever(document_store=(document_store), top_k=top_k)
@@ -109,6 +119,7 @@ def keyword_search(
     return search_pipeline, index_pipeline
 
 
+@is_pipeline
 def dense_passage_retrieval(
     index="documents",
     split_word_length=100,
@@ -128,7 +139,7 @@ def dense_passage_retrieval(
     """
     global document_store
     if index != document_store.index:
-        init_document_store(index)
+        document_store = init_document_store(document_store, index)
     dpr_retriever = DensePassageRetriever(
         document_store=document_store,
         query_embedding_model=query_embedding_model,
@@ -168,6 +179,7 @@ def dense_passage_retrieval(
     return search_pipeline, index_pipeline
 
 
+@is_pipeline
 def dense_passage_retrieval_ranker(
     index="documents",
     split_word_length=100,
