@@ -3,6 +3,7 @@ import os
 import shutil
 import core.pipelines as pipelines_functions
 from core.pipelines import data_path
+from core.audio import audio_to_text, load_model
 from inspect import getmembers, isfunction, signature
 from newspaper import Article
 from PyPDF2 import PdfFileReader
@@ -96,9 +97,19 @@ def extract_text_from_file(file):
         return file_text
 
     # read image file (OCR)
-    elif file.type == "image/jpeg":
+    elif file.type in ["image/jpeg", "image/png"]:
         return pytesseract.image_to_string(Image.open(file))
+
+    # read audio file (AudoToText)
+    elif file.type in ["audio/mpeg", "audio/wav", "audio/aac", "audio/x-m4a"]:
+        text = audio_to_text(st.session_state["audio_model"], file)
+        return text
 
     else:
         st.warning(f"File type {file.type} not supported")
         return None
+
+
+@st.experimental_singleton
+def load_audio_model():
+    return load_model()

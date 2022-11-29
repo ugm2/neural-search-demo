@@ -11,11 +11,15 @@ st.set_page_config(
 from streamlit_option_menu import option_menu
 from interface.config import session_state_variables, pages
 from interface.components import component_select_pipeline
+from interface.utils import load_audio_model
 
 # Initialization of session state
 for key, value in session_state_variables.items():
     if key not in st.session_state:
         st.session_state[key] = value
+
+# Init audio model
+st.session_state["audio_model"] = load_audio_model()
 
 
 def run_demo():

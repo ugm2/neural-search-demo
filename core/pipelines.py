@@ -85,9 +85,7 @@ def dense_passage_retrieval(
       - One BERT base model to encode queries
       - Ranking of documents done by dot product similarity between query and document embeddings
     """
-    global document_store
-    if index != document_store.index:
-        document_store = InMemoryDocumentStore(index=index)
+    document_store = InMemoryDocumentStore(index=index)
     dpr_retriever = DensePassageRetriever(
         document_store=document_store,
         query_embedding_model=query_embedding_model,

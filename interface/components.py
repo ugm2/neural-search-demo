@@ -51,6 +51,19 @@ def component_select_pipeline(container):
                     "doc": pipeline_funcs[index_pipe].__doc__,
                 }
                 reset_vars_data()
+            # TODO: Use elasticsearch and remove this workaround for TFIDF
+            # Reload if Keyword Search is selected
+            elif st.session_state["pipeline"]["name"] == "Keyword Search":
+                st.session_state["pipeline_func_parameters"] = pipeline_func_parameters
+                (search_pipeline, index_pipeline,) = pipeline_funcs[
+                    index_pipe
+                ](**pipeline_func_parameters[index_pipe])
+                st.session_state["pipeline"] = {
+                    "name": selected_pipeline,
+                    "search_pipeline": search_pipeline,
+                    "index_pipeline": index_pipeline,
+                    "doc": pipeline_funcs[index_pipe].__doc__,
+                }
 
 
 def component_show_pipeline(pipeline, pipeline_name):
@@ -126,7 +139,7 @@ def component_file_input(container, doc_id):
         with st.expander("Enter Files"):
             while True:
                 file = st.file_uploader(
-                    "Upload a .txt, .pdf, .csv, image file", key=doc_id
+                    "Upload a .txt, .pdf, .csv, image file, audio file", key=doc_id
                 )
                 if file != None:
                     extracted_text = extract_text_from_file(file)
