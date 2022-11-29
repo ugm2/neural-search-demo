@@ -16,10 +16,7 @@ def audio_to_text(model, audio_file):
     audio.export("audio_tmp")
     try:
         audio = whisper.load_audio("audio_tmp")
-        audio = whisper.pad_or_trim(audio)
-        mel = whisper.log_mel_spectrogram(audio).to(model.device)
-        options = whisper.DecodingOptions()
-        result = whisper.decode(model, mel, options)
+        result = whisper.transcribe(model=model, audio=audio, verbose=True)
     finally:
         os.remove("audio_tmp")
-    return result.text
+    return result["text"]
