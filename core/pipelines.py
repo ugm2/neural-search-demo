@@ -84,8 +84,10 @@ def keyword_search(
         document_store = init_document_store(document_store, index)
 
     if isinstance(document_store, ElasticsearchDocumentStore):
+        retriever_name = "BM25Retriever"
         keyword_retriever = BM25Retriever(document_store=(document_store), top_k=top_k)
     else:
+        retriever_name = "TfidfRetriever"
         keyword_retriever = TfidfRetriever(document_store=(document_store), top_k=top_k)
     processor = PreProcessor(
         clean_empty_lines=True,
@@ -98,7 +100,7 @@ def keyword_search(
     )
     # SEARCH PIPELINE
     search_pipeline = Pipeline()
-    search_pipeline.add_node(keyword_retriever, name="TfidfRetriever", inputs=["Query"])
+    search_pipeline.add_node(keyword_retriever, name=retriever_name, inputs=["Query"])
 
     # INDEXING PIPELINE
     index_pipeline = Pipeline()
@@ -113,7 +115,7 @@ def keyword_search(
             generated_audio_dir=Path(data_path + "audio"),
         )
         search_pipeline.add_node(
-            doc2speech, name="DocumentToSpeech", inputs=["TfidfRetriever"]
+            doc2speech, name="DocumentToSpeech", inputs=[retriever_name]
         )
 
     return search_pipeline, index_pipeline

@@ -12,7 +12,7 @@ from interface.components import (
 
 def page_landing_page(container):
     with container:
-        st.header("Neural Search V2.0")
+        st.header("Neural Search V2.1")
 
         st.markdown(
             "This is a tool to allow indexing & search content using neural capabilities"
@@ -22,7 +22,7 @@ def page_landing_page(container):
         )
         st.markdown(
             "In this second version you can:"
-            "\n  - Index raw text, URLs, CSVs, PDFs and Images"
+            "\n  - Index raw text, URLs, CSVs, PDFs, Images and even audio!"
             "\n  - Use Dense Passage Retrieval, Keyword Search pipeline and DPR Ranker pipelines"
             "\n  - Search the indexed documents"
             "\n  - Read your responses out loud using the `audio_output` option!"
@@ -30,7 +30,6 @@ def page_landing_page(container):
         st.markdown(
             "TODO list:"
             "\n  - File type classification and converter nodes"
-            "\n  - Audio to text support for indexing"
             "\n  - Build other pipelines"
         )
         st.markdown(
