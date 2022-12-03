@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.8.9
 RUN useradd -m -u 1000 user
 WORKDIR /home/user/app
 RUN apt-get install -y   git   git-lfs   ffmpeg   libsm6   libxext6   cmake   libgl1-mesa-glx   && rm -rf /var/lib/apt/lists/*   && git lfs install
