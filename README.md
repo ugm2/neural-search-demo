@@ -4,7 +4,7 @@ emoji: 🧠🔎
 colorFrom: blue
 colorTo: green
 sdk: docker
-sdk_version: 1.10.0
+app_port: 8501
 pinned: true
 ---
 
