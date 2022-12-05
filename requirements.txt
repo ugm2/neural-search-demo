@@ -10,4 +10,5 @@ soundfile==0.10.3.post1
 espnet
 pydub==0.25.1
 espnet_model_zoo==0.1.7
+streamlit==1.10.0
 git+https://github.com/openai/whisper.git
