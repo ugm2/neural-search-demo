@@ -7,7 +7,6 @@ COPY ./packages.txt /app/packages.txt
 
 RUN apt-get update && xargs -r -a /app/packages.txt apt-get install -y && rm -rf /var/lib/apt/lists/*
 RUN pip3 install --no-cache-dir -r /app/requirements.txt
-RUN pip3 install --no-cache-dir streamlit==1.10.0 
 
 # User
 RUN useradd -m -u 1000 user
