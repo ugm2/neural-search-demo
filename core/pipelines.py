@@ -17,7 +17,6 @@ import logging
 import os
 from time import sleep
 
-from core.elasticsearch import CustomElasticSearchContainer
 from core.utils import is_pipeline
 
 
@@ -30,13 +29,6 @@ os.makedirs(data_path, exist_ok=True)
 index = "documents"
 es_host = "127.0.0.1"
 es_port = 9200
-
-es = CustomElasticSearchContainer(
-    image="docker.elastic.co/elasticsearch/elasticsearch:7.9.2",
-    port_to_expose=es_port,
-    name="elasticsearch_neural",
-)
-es.start_if_not_running()
 
 
 def init_document_store(document_store, index, initial_rump_up_time=20):
