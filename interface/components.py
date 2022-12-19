@@ -20,18 +20,18 @@ def component_select_pipeline(container):
                 else 0,
             )
             index_pipe = pipeline_names.index(selected_pipeline)
-            st.write("---")
-            st.header("Pipeline Parameters")
-            for parameter, value in pipeline_func_parameters[index_pipe].items():
-                if isinstance(value, str):
-                    value = st.text_input(parameter, value)
-                elif isinstance(value, bool):
-                    value = st.checkbox(parameter, value)
-                elif isinstance(value, int):
-                    value = int(st.number_input(parameter, value=value))
-                elif isinstance(value, float):
-                    value = float(st.number_input(parameter, value=value))
-                pipeline_func_parameters[index_pipe][parameter] = value
+            with st.expander("Pipeline parameters"):
+                for parameter, value in pipeline_func_parameters[index_pipe].items():
+                    if isinstance(value, str):
+                        value = st.text_input(parameter, value)
+                    elif isinstance(value, bool):
+                        value = st.checkbox(parameter, value)
+                    elif isinstance(value, int):
+                        value = int(st.number_input(parameter, value=value))
+                    elif isinstance(value, float):
+                        value = float(st.number_input(parameter, value=value))
+                    pipeline_func_parameters[index_pipe][parameter] = value
+            # If pipeline selected changes
             if (
                 st.session_state["pipeline"] is None
                 or st.session_state["pipeline"]["name"] != selected_pipeline
@@ -53,7 +53,12 @@ def component_select_pipeline(container):
                 reset_vars_data()
             # TODO: Use elasticsearch and remove this workaround for TFIDF
             # Reload if Keyword Search is selected
-            elif st.session_state["pipeline"]["name"] == "Keyword Search":
+            elif (
+                st.session_state["pipeline"]["name"] == "Keyword Search"
+                and st.session_state["pipeline"] is not None
+                and "TfidfRetriever"
+                in st.session_state["pipeline"]["search_pipeline"].components
+            ):
                 st.session_state["pipeline_func_parameters"] = pipeline_func_parameters
                 (search_pipeline, index_pipeline,) = pipeline_funcs[
                     index_pipe

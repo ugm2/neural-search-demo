@@ -24,6 +24,7 @@ st.session_state["audio_model"] = load_audio_model()
 
 def run_demo():
 
+    # TODO: Wait before ES is up so the pipeline gets connected properly
     main_page = st.container()
 
     st.sidebar.title("🧠 Neural Search 🔎")

@@ -4,21 +4,60 @@ Haystack Pipelines
 
 from pathlib import Path
 from haystack import Pipeline
-from haystack.document_stores import InMemoryDocumentStore
-from haystack.nodes.retriever import DensePassageRetriever, TfidfRetriever
+from haystack.document_stores import InMemoryDocumentStore, ElasticsearchDocumentStore
+from haystack.nodes.retriever import (
+    DensePassageRetriever,
+    TfidfRetriever,
+    BM25Retriever,
+)
 from haystack.nodes.preprocessor import PreProcessor
 from haystack.nodes.ranker import SentenceTransformersRanker
 from haystack.nodes.audio.document_to_speech import DocumentToSpeech
+import logging
 import os
+from time import sleep
+
+from core.utils import is_pipeline
+
+
+logger = logging.getLogger("Neural Search Demo - Pipelines")
+logger.setLevel(os.environ.get("LOGGER_LEVEL", logging.WARNING))
 
 data_path = "data/"
 os.makedirs(data_path, exist_ok=True)
 
 index = "documents"
+es_host = "127.0.0.1"
+es_port = 9200
 
-document_store = InMemoryDocumentStore(index=index)
+
+def init_document_store(document_store, index, initial_rump_up_time=20):
+    # Try instantiating of Elasticsearch Document Store or default to InMemoryDocumentStore
+    try:
+        document_store = ElasticsearchDocumentStore(
+            host=es_host, port=es_port, index=index
+        )
+    except Exception as e:
+        logger.info(
+            f"First connection to Elasticsearch failed. Waiting {initial_rump_up_time} seconds for the initial ramp up"
+        )
+        sleep(initial_rump_up_time)
+        try:
+            document_store = ElasticsearchDocumentStore(
+                host=es_host, port=es_port, index=index
+            )
+            logger.info("Elasticsearch connected")
+        except Exception as e:
+            logger.error(f"Error loading the ElasticsearchDocumentStore. Detail: {e}")
+
+            document_store = InMemoryDocumentStore(index=index)
+    return document_store
 
 
+document_store = init_document_store(None, index)
+
+
+@is_pipeline
 def keyword_search(
     index="documents", split_word_length=100, top_k=10, audio_output=False
 ):
@@ -34,8 +73,14 @@ def keyword_search(
     """
     global document_store
     if index != document_store.index:
-        document_store = InMemoryDocumentStore(index=index)
-    keyword_retriever = TfidfRetriever(document_store=(document_store), top_k=top_k)
+        document_store = init_document_store(document_store, index)
+
+    if isinstance(document_store, ElasticsearchDocumentStore):
+        retriever_name = "BM25Retriever"
+        keyword_retriever = BM25Retriever(document_store=(document_store), top_k=top_k)
+    else:
+        retriever_name = "TfidfRetriever"
+        keyword_retriever = TfidfRetriever(document_store=(document_store), top_k=top_k)
     processor = PreProcessor(
         clean_empty_lines=True,
         clean_whitespace=True,
@@ -47,7 +92,7 @@ def keyword_search(
     )
     # SEARCH PIPELINE
     search_pipeline = Pipeline()
-    search_pipeline.add_node(keyword_retriever, name="TfidfRetriever", inputs=["Query"])
+    search_pipeline.add_node(keyword_retriever, name=retriever_name, inputs=["Query"])
 
     # INDEXING PIPELINE
     index_pipeline = Pipeline()
@@ -62,12 +107,13 @@ def keyword_search(
             generated_audio_dir=Path(data_path + "audio"),
         )
         search_pipeline.add_node(
-            doc2speech, name="DocumentToSpeech", inputs=["TfidfRetriever"]
+            doc2speech, name="DocumentToSpeech", inputs=[retriever_name]
         )
 
     return search_pipeline, index_pipeline
 
 
+@is_pipeline
 def dense_passage_retrieval(
     index="documents",
     split_word_length=100,
@@ -85,7 +131,9 @@ def dense_passage_retrieval(
       - One BERT base model to encode queries
       - Ranking of documents done by dot product similarity between query and document embeddings
     """
-    document_store = InMemoryDocumentStore(index=index)
+    global document_store
+    if index != document_store.index:
+        document_store = init_document_store(document_store, index)
     dpr_retriever = DensePassageRetriever(
         document_store=document_store,
         query_embedding_model=query_embedding_model,
@@ -125,6 +173,7 @@ def dense_passage_retrieval(
     return search_pipeline, index_pipeline
 
 
+@is_pipeline
 def dense_passage_retrieval_ranker(
     index="documents",
     split_word_length=100,
