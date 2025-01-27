@@ -13,3 +13,4 @@ openai-whisper==20240930
 farm-haystack-text2speech==1.1.1
 altair==5.4.1
 lxml_html_clean==0.4.1
+streamlit_option_menu==0.4.0
