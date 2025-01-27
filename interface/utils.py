@@ -1,16 +1,18 @@
-from io import StringIO
 import os
 import shutil
-import core.pipelines as pipelines_functions
-from core.pipelines import data_path
-from core.audio import audio_to_text, load_model
 from inspect import getmembers, isfunction, signature
-from newspaper import Article
-from PyPDF2 import PdfFileReader
-import streamlit as st
+from io import StringIO
+
 import pandas as pd
 import pytesseract
+import streamlit as st
+from newspaper import Article
 from PIL import Image
+from PyPDF2 import PdfFileReader
+
+import core.pipelines as pipelines_functions
+from core.audio import audio_to_text, load_model
+from core.pipelines import data_path
 
 
 def get_pipelines():
@@ -35,7 +37,7 @@ def reset_vars_data():
     os.makedirs(data_path, exist_ok=True)
 
 
-@st.experimental_memo
+@st.cache_data
 def extract_text_from_url(url: str):
     article = Article(url)
     article.download()
@@ -44,7 +46,7 @@ def extract_text_from_url(url: str):
     return article.text
 
 
-@st.experimental_memo
+@st.cache_data
 def extract_text_from_file(file):
     # read text file
     if file.type == "text/plain":
@@ -110,6 +112,6 @@ def extract_text_from_file(file):
         return None
 
 
-@st.experimental_singleton
+@st.cache_resource
 def load_audio_model():
     return load_model()

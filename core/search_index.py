@@ -1,6 +1,7 @@
-from haystack.schema import Document
-from haystack.document_stores import BaseDocumentStore
 import uuid
+
+from haystack.document_stores import BaseDocumentStore
+from haystack.schema import Document
 
 
 def format_docs(documents):
@@ -37,16 +38,23 @@ def search(queries, pipeline):
         for res in matches:
             if not score_is_empty:
                 score_is_empty = True if res.score is None else False
+
+            # Get the original text from content or meta
+            original_text = res.content
+            if hasattr(res, "meta") and "content_text" in res.meta:
+                original_text = res.meta["content_text"]
+
             match = {
-                "text": res.content,
+                "text": original_text,
                 "id": res.meta["id"],
                 "fragment_id": res.id,
                 "meta": res.meta,
             }
             if not score_is_empty:
                 match.update({"score": res.score})
-            if hasattr(res, "content_audio"):
-                match.update({"content_audio": res.content_audio})
+            if res.content_type == "audio":
+                # Add audio path from the content field
+                match.update({"content_audio": res.content})
             query_results.append(match)
         if not score_is_empty:
             query_results = sorted(

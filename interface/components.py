@@ -25,16 +25,35 @@ def component_select_pipeline(container):
             index_pipe = pipeline_names.index(selected_pipeline)
             st.write("---")
             st.header("Pipeline Parameters")
+
+            # Process audio_output first to ensure top_k is set correctly
+            audio_output_value = False
             for parameter, value in pipeline_func_parameters[index_pipe].items():
-                if isinstance(value, str):
+                if parameter == "audio_output":
+                    audio_output_value = st.checkbox(parameter, value)
+                    pipeline_func_parameters[index_pipe][
+                        "audio_output"
+                    ] = audio_output_value
+                    if audio_output_value:
+                        pipeline_func_parameters[index_pipe]["top_k"] = 3
+                    break
+
+            # Then process all other parameters
+            for parameter, value in pipeline_func_parameters[index_pipe].items():
+                if parameter == "audio_output":
+                    continue
+                elif isinstance(value, str):
                     value = st.text_input(parameter, value)
                 elif isinstance(value, bool):
                     value = st.checkbox(parameter, value)
                 elif isinstance(value, int):
+                    if parameter == "top_k" and audio_output_value:
+                        value = 3
                     value = int(st.number_input(parameter, value=value))
                 elif isinstance(value, float):
                     value = float(st.number_input(parameter, value=value))
                 pipeline_func_parameters[index_pipe][parameter] = value
+
             if (
                 st.session_state["pipeline"] is None
                 or st.session_state["pipeline"]["name"] != selected_pipeline
@@ -93,12 +112,18 @@ def component_show_search_result(container, results):
             st.markdown(f"### Match {idx+1}")
             st.markdown(f"**Text**: {document['text']}")
             st.markdown(f"**Document**: {document['id']}")
+            st.json(document)
             if "_split_id" in document["meta"]:
                 st.markdown(f"**Document Chunk**: {document['meta']['_split_id']}")
             if "score" in document:
                 st.markdown(f"**Score**: {document['score']:.3f}")
             if "content_audio" in document:
-                st.audio(str(document["content_audio"]))
+                try:
+                    with open(document["content_audio"], "rb") as audio_file:
+                        audio_bytes = audio_file.read()
+                        st.audio(audio_bytes, format="audio/wav")
+                except Exception as e:
+                    st.error(f"Error loading audio: {str(e)}")
             st.markdown("---")
 
 

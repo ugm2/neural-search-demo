@@ -2,17 +2,22 @@
 Haystack Pipelines
 """
 
+import os
 from pathlib import Path
+
 from haystack import Pipeline
 from haystack.document_stores import InMemoryDocumentStore
-from haystack.nodes.retriever import DensePassageRetriever, TfidfRetriever
 from haystack.nodes.preprocessor import PreProcessor
 from haystack.nodes.ranker import SentenceTransformersRanker
-from haystack.nodes.audio.document_to_speech import DocumentToSpeech
-import os
+from haystack.nodes.retriever import DensePassageRetriever, TfidfRetriever
+from text2speech import DocumentToSpeech
 
 data_path = "data/"
+audio_path = os.path.join(data_path, "audio")
 os.makedirs(data_path, exist_ok=True)
+os.makedirs(audio_path, exist_ok=True)
+# Ensure proper permissions
+os.chmod(audio_path, 0o777)
 
 index = "documents"
 
@@ -59,7 +64,7 @@ def keyword_search(
     if audio_output:
         doc2speech = DocumentToSpeech(
             model_name_or_path="espnet/kan-bayashi_ljspeech_vits",
-            generated_audio_dir=Path(data_path + "audio"),
+            generated_audio_dir=Path(audio_path),
         )
         search_pipeline.add_node(
             doc2speech, name="DocumentToSpeech", inputs=["TfidfRetriever"]
@@ -114,12 +119,12 @@ def dense_passage_retrieval(
     )
 
     if audio_output:
-        doc2speech = DocumentToSpeech(
+        document_to_speech = DocumentToSpeech(
             model_name_or_path="espnet/kan-bayashi_ljspeech_vits",
-            generated_audio_dir=Path(data_path + "audio"),
+            generated_audio_dir=Path(audio_path),
         )
         search_pipeline.add_node(
-            doc2speech, name="DocumentToSpeech", inputs=["DPRRetriever"]
+            document_to_speech, name="DocumentToSpeech", inputs=["DPRRetriever"]
         )
 
     return search_pipeline, index_pipeline
@@ -155,10 +160,12 @@ def dense_passage_retrieval_ranker(
     search_pipeline.add_node(ranker, name="Ranker", inputs=["DPRRetriever"])
 
     if audio_output:
-        doc2speech = DocumentToSpeech(
+        document_to_speech = DocumentToSpeech(
             model_name_or_path="espnet/kan-bayashi_ljspeech_vits",
-            generated_audio_dir=Path(data_path + "audio"),
+            generated_audio_dir=Path(audio_path),
         )
-        search_pipeline.add_node(doc2speech, name="DocumentToSpeech", inputs=["Ranker"])
+        search_pipeline.add_node(
+            document_to_speech, name="DocumentToSpeech", inputs=["Ranker"]
+        )
 
     return search_pipeline, index_pipeline

@@ -8,10 +8,15 @@ st.set_page_config(
     menu_items={"About": "https://github.com/ugm2/neural-search-demo"},
 )
 
+import nltk
 from streamlit_option_menu import option_menu
-from interface.config import session_state_variables, pages
+
 from interface.components import component_select_pipeline
+from interface.config import pages, session_state_variables
 from interface.utils import load_audio_model
+
+nltk.download("punkt_tab")
+nltk.download("averaged_perceptron_tagger_eng")
 
 # Initialization of session state
 for key, value in session_state_variables.items():
