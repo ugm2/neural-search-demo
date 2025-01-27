@@ -1,11 +1,12 @@
 import streamlit as st
+
+from interface.draw_pipelines import get_pipeline_graph
 from interface.utils import (
-    get_pipelines,
-    extract_text_from_url,
     extract_text_from_file,
+    extract_text_from_url,
+    get_pipelines,
     reset_vars_data,
 )
-from interface.draw_pipelines import get_pipeline_graph
 
 
 def component_select_pipeline(container):
@@ -15,9 +16,11 @@ def component_select_pipeline(container):
             selected_pipeline = st.selectbox(
                 "Select pipeline",
                 pipeline_names,
-                index=pipeline_names.index("Keyword Search")
-                if "Keyword Search" in pipeline_names
-                else 0,
+                index=(
+                    pipeline_names.index("Keyword Search")
+                    if "Keyword Search" in pipeline_names
+                    else 0
+                ),
             )
             index_pipe = pipeline_names.index(selected_pipeline)
             st.write("---")
@@ -41,7 +44,10 @@ def component_select_pipeline(container):
                 != list(pipeline_func_parameters[index_pipe].values())
             ):
                 st.session_state["pipeline_func_parameters"] = pipeline_func_parameters
-                (search_pipeline, index_pipeline,) = pipeline_funcs[
+                (
+                    search_pipeline,
+                    index_pipeline,
+                ) = pipeline_funcs[
                     index_pipe
                 ](**pipeline_func_parameters[index_pipe])
                 st.session_state["pipeline"] = {
@@ -55,7 +61,10 @@ def component_select_pipeline(container):
             # Reload if Keyword Search is selected
             elif st.session_state["pipeline"]["name"] == "Keyword Search":
                 st.session_state["pipeline_func_parameters"] = pipeline_func_parameters
-                (search_pipeline, index_pipeline,) = pipeline_funcs[
+                (
+                    search_pipeline,
+                    index_pipeline,
+                ) = pipeline_funcs[
                     index_pipe
                 ](**pipeline_func_parameters[index_pipe])
                 st.session_state["pipeline"] = {
@@ -141,9 +150,9 @@ def component_file_input(container, doc_id):
                 file = st.file_uploader(
                     "Upload a .txt, .pdf, .csv, image file, audio file", key=doc_id
                 )
-                if file != None:
+                if file is not None:
                     extracted_text = extract_text_from_file(file)
-                    if extracted_text != None:
+                    if extracted_text is not None:
                         files.append({"text": extracted_text, "doc_id": doc_id})
                         doc_id += 1
                         st.markdown("---")
