@@ -11,3 +11,4 @@ espnet
 pydub==0.25.1
 espnet_model_zoo==0.1.7
 git+https://github.com/openai/whisper.git
+altair>=4.0.0
